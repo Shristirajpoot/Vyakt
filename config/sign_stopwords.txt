@@ -1,0 +1,28 @@
+# Words removed when "Remove joining words" is enabled.
+# One word per line, lowercase.
+a
+an
+the
+is
+am
+are
+was
+were
+be
+been
+being
+for
+of
+to
+at
+in
+on
+by
+with
+from
+as
+and
+or
+if
+then
+than
