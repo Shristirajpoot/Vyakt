@@ -43,7 +43,7 @@ MYSQL_PASSWORD=
 MYSQL_DB=sign_language_app
 MYSQL_PORT=3306
 GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
-GESTURA_MODEL_PATH=Model/artifacts/gesture_transformer_126.pth
+Vyakt_MODEL_PATH=Model/artifacts/gesture_transformer_126.pth
 ```
 
 ### 3. Run Flask app

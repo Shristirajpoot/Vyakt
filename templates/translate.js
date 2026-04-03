@@ -1,9 +1,9 @@
-const apiKey = window.GESTURA_TRANSLATE_API_KEY || '';
+const apiKey = window.Vyakt_TRANSLATE_API_KEY || '';
 
 // Function to translate page content based on selected language
 async function translatePage(targetLanguage) {
     if (!apiKey) {
-        console.warn('GESTURA_TRANSLATE_API_KEY is not set. Skipping translation.');
+        console.warn('Vyakt_TRANSLATE_API_KEY is not set. Skipping translation.');
         return;
     }
     const translatableElements = document.querySelectorAll('[data-translate]');
