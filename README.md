@@ -1,28 +1,28 @@
 # Vyakt
 
-![Vyakt Logo](Vyakt/static/images/gesturaLogo.png)
+![Vyakt Logo](static/images/Vyakt.png)
 
 **Vyakt** is a two-way sign language translator that breaks communication barriers using technology. It translates sign language gestures to text in real-time and converts text input into sign language animations.
 
-![Sign Language Alphabet](Vyakt/static/images/hand-signs-of-the-ASL-Language.png)
+![Sign Language Alphabet](static/images/hand-signs-of-the-ASL-Language.png)
 
 ## Features
 
 ### Sign-to-Text
 Real-time gesture recognition using computer vision and deep learning.
-![Sign to Text](Vyakt/static/images/SignToText.png)
+![Sign to Text](static/images/SignToText.png)
 
 ### Text-to-Sign
 Converts text input into sign language animations.
-![Text to Sign](Vyakt/static/images/textToSign.png)
+![Text to Sign](static/images/textToSign.png)
 
 ### Dashboard
 User-friendly dashboard to manage your profile and settings.
-![Dashboard](Vyakt/static/images/Dashboard.png)
+![Dashboard](static/images/Dashboard.png)
 
 ### Animation Dashboard
 Dedicated interface for text-to-sign translation.
-![Text to Sign Dashboard](Vyakt/static/images/TextToSignDashboard.png)
+![Text to Sign Dashboard](static/images/TextToSignDashboard.png)
 
 
 ## End-to-End Pipeline
