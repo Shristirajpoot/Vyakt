@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="dashboard-header">
+        <h1>Sign Language Translator</h1>
+        <p class="subheading" style="color: var(--text-muted);">Seamlessly translate sign language gestures into text
+            with AI-powered technology.</p>
+    </div>
+
+    <!-- Button Container -->
+    <div class="action-buttons">
+        <button id="startCameraButton" class="btn btn-primary" data-feed-url="{{ url_for('video_feed') }}">
+            SIGN TO TEXT
+        </button>
+
+        <a href="{{ url_for('animation_home') }}" class="btn btn-outline">
+            TEXT TO SIGN
+        </a>
+
+        <button id="closeCameraButton" class="btn btn-outline"
+            style="display: none; border-color: #ef4444; color: #ef4444;">
+            Close Camera
+        </button>
+    </div>
+
+    <div id="cameraFeedContainer" class="camera-container">
+        <div class="card camera-box">
+            <h2 style="color: var(--primary-color);">Camera Feed</h2>
+            <img id="cameraFeed" src="" alt="Camera Feed" class="camera-feed-img">
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/pages/dashboard.js') }}"></script>
+{% endblock %}

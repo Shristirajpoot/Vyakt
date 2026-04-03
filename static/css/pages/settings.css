@@ -1,0 +1,24 @@
+/* Settings Styles */
+
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.settings-card {
+    text-align: center;
+}
+
+.settings-header {
+    margin-bottom: 2.5rem;
+}
+
+.settings-header h1 {
+    color: var(--primary-color);
+}
+
+.settings-form {
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+}

@@ -1,0 +1,32 @@
+/* Feedback Page Styles */
+.feedback-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feedback-card {
+    text-align: center;
+}
+
+.feedback-textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.rating-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.rating-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.rating-option input {
+    margin-bottom: 0.5rem;
+}

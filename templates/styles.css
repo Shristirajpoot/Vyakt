@@ -1,0 +1,28 @@
+/* styles.css */
+
+/* Default Light Theme */
+:root {
+    --background-color: #fff;
+    --text-color: #333;
+  }
+  
+  /* Dark Theme */
+  [data-theme='dark'] {
+    --background-color: #181818;
+    --text-color: #fff;
+  }
+  
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Additional styles for buttons, navbars, etc. */
+  button, .navbar {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  
+  /* Add any other components you want to style here */
+  

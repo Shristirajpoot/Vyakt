@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="{{ g.language | default('en') }}" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}GesturaAI - Sign Language Translator{% endblock %}</title>
+
+  <!-- Google Fonts: Outfit (Headings) & Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- Page Specific CSS -->
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="wrapper">
+    <header>
+      <nav class="navbar">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+          <img src="{{ url_for('static', filename='images/gesturaLogo.png') }}" alt="GesturaAI Logo" class="brand-icon"
+            style="height: 40px; width: auto; vertical-align: middle;"> GesturaAI
+        </a>
+
+        <div class="nav-links" id="nav-links">
+          <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('about') }}" class="nav-link">About</a>
+          <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+          <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+
+          {% if session.get('username') %}
+          <!-- User Dropdown -->
+          <div class="dropdown" style="position: relative;">
+            <button class="nav-link dropdown-toggle" id="accountDropdown"
+              style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+              {{ session.get('username') }} ▼
+            </button>
+            <div class="dropdown-menu" aria-labelledby="accountDropdown">
+              <a href="{{ url_for('profile') }}" class="dropdown-item"
+                style="display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none;">Profile</a>
+              <a href="{{ url_for('settings') }}" class="dropdown-item"
+                style="display: block; padding: 0.5rem 1rem; color: var(--text-color); text-decoration: none;">Settings</a>
+              <div style="border-top: 1px solid var(--card-border); margin: 0.25rem 0;"></div>
+              <a href="{{ url_for('logout') }}" class="dropdown-item"
+                style="display: block; padding: 0.5rem 1rem; color: var(--danger-color, #ef4444); text-decoration: none;">Logout</a>
+            </div>
+          </div>
+          {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Login</a>
+          <a href="{{ url_for('register') }}" class="btn btn-outline btn-sm">Register</a>
+          {% endif %}
+
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle" class="theme-toggle" title="Toggle Theme"
+            style="background:none; border:none; cursor:pointer; font-size:1.2rem;">
+            🌙
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container" style="margin-top: 1rem;">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2026 GesturaAI. Breaking Barriers with Technology.</p>
+    </footer>
+  </div>
+
+  <!-- Global JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <!-- Page Specific JS -->
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

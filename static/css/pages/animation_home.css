@@ -1,0 +1,42 @@
+/* Animation Home Styles */
+.anim-home-container {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+}
+
+.anim-home-title {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.anim-home-desc {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+.feature-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.anim-feature {
+    flex: 1;
+    min-width: 250px;
+    padding: 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease;
+}
+
+.anim-feature:hover {
+    transform: translateY(-5px);
+}

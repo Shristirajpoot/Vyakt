@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Feedback{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/feedback.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container feedback-container">
+  <div class="card feedback-card">
+    <h1 style="color: var(--primary-color);">We Value Your Feedback</h1>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">
+      Help us improve Gestura by sharing your experience.
+    </p>
+
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label" for="rating">Rate your experience</label>
+        <div class="rating-group">
+          <label class="rating-option">
+            <input type="radio" name="rating" value="5" required>
+            <span>⭐⭐⭐⭐⭐</span>
+          </label>
+          <label class="rating-option">
+            <input type="radio" name="rating" value="4">
+            <span>⭐⭐⭐⭐</span>
+          </label>
+          <label class="rating-option">
+            <input type="radio" name="rating" value="3">
+            <span>⭐⭐⭐</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="feedback">Your Message</label>
+        <textarea name="feedback" id="feedback" class="form-control feedback-textarea"
+          placeholder="Tell us what you think..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full">Submit Feedback</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

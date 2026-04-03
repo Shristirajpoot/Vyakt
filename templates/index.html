@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Gestura - Home{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1 data-translate="true">Bridge the Gap with Gestura</h1>
+    <p data-translate="true">Advanced Sign Language Translation powered by AI. Communicate seamlessly, learn
+        effectively, and connect globally.</p>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary" data-translate="true">Start Translating</a>
+        <a href="#features" class="btn btn-outline" style="margin-left: 1rem;" data-translate="true">Learn More</a>
+    </div>
+</section>
+
+<section id="features" class="features-container">
+    <h2 class="section-title" data-translate="true">Why Gestura?</h2>
+
+    <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="card feature-item">
+            <div class="feature-title">
+                <span data-translate="true">Accessible Communication</span>
+                <span class="feature-chevron">▼</span>
+            </div>
+            <div class="feature-content">
+                <p data-translate="true">Bridging communities effortlessly. Ensure that everyone, regardless of
+                    background, can communicate using sign language translations.</p>
+                <video src="{{ url_for('static', filename='assets/2.mp4') }}" controls muted loop
+                    class="feature-video"></video>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="card feature-item">
+            <div class="feature-title">
+                <span data-translate="true">Real-Time Translation</span>
+                <span class="feature-chevron">▼</span>
+            </div>
+            <div class="feature-content">
+                <p data-translate="true">Instant results for seamless interaction. Our real-time translation provides
+                    instant feedback.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/MYVD7mVJ21w?enablejsapi=1" title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="card feature-item">
+            <div class="feature-title">
+                <span data-translate="true">User-Friendly Design</span>
+                <span class="feature-chevron">▼</span>
+            </div>
+            <div class="feature-content">
+                <p data-translate="true">The interface is designed with accessibility in mind, ensuring a smooth
+                    experience for all users.</p>
+                <video src="{{ url_for('static', filename='assets/3.mp4') }}" controls muted loop
+                    class="feature-video"></video>
+            </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="card feature-item">
+            <div class="feature-title">
+                <span data-translate="true">Gesture Recognition</span>
+                <span class="feature-chevron">▼</span>
+            </div>
+            <div class="feature-content">
+                <p data-translate="true">Leveraging advanced AI algorithms to detect and interpret sign language
+                    gestures with high precision.</p>
+                <video src="{{ url_for('static', filename='assets/4.mp4') }}" controls muted loop
+                    class="feature-video"></video>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="feedback-cta" class="cta-section">
+    <div class="card cta-card">
+        <h2 data-translate="true">Your Feedback Matters</h2>
+        <p data-translate="true">Help us improve Gestura and make it the best translation tool for everyone.</p>
+        <a href="{{ url_for('feedback') }}" class="btn btn-outline" data-translate="true"
+            style="margin-top: 1rem;">Provide Feedback</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pass API Key safely to JS context if needed globally
+    window.googleTranslateApiKey = {{ google_translate_api_key | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/pages/index.js') }}"></script>
+{% endblock %}

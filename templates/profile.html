@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Profile{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container profile-container">
+  <div class="card profile-card">
+    <div class="profile-header">
+      <h1 style="color: var(--primary-color);">Your Profile</h1>
+      <p style="color: var(--text-muted);">Manage your details</p>
+    </div>
+
+    <div class="profile-avatar">
+      <img
+        src="{{ url_for('static', filename=user.profile_picture if user.profile_picture else 'default-profile.jpeg') }}"
+        alt="Profile Picture" class="profile-img">
+    </div>
+
+    <div class="profile-info">
+      <p><strong>User ID:</strong> {{ user.id }}</p>
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+
+    <div class="profile-form">
+      <h3 class="text-center mb-3">Update Details</h3>
+      <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input type="text" name="username" value="{{ user.username }}" required class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" name="email" value="{{ user.email }}" required class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="profile_picture">New Picture</label>
+          <input type="file" name="profile_picture" class="form-control">
+        </div>
+
+        <button class="btn btn-primary w-full" type="submit">Update Profile</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

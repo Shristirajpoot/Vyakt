@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Welcome{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <h1 class="hero-title">Sign Language Translator</h1>
+    <p class="hero-subtitle">
+        Breaking barriers with technology. Translate sign language gestures to text and vice versa in real-time.
+    </p>
+
+    <div class="cta-group">
+        {% if session.get('username') %}
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-hero">Go to Dashboard</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-hero">Login</a>
+        <a href="{{ url_for('register') }}" class="btn btn-outline btn-hero">Register</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Gestura - About Us{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/about.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+	<h1 data-translate="true">About Gestura</h1>
+	<p data-translate="true" style="color: var(--text-muted);">
+		Innovating solely for the purpose of bridging communication gaps.
+	</p>
+</section>
+
+<section class="container" style="max-width: 1000px;">
+
+	<div class="mission-grid">
+		<div class="card full-width">
+			<h2 data-translate="true">Our Mission</h2>
+			<p data-translate="true">
+				Gestura is an innovative AI-powered Sign Language Translator designed to bridge the communication gap
+				between the hearing and the Deaf/Hard-of-Hearing communities. Our mission is to make communication
+				accessible, seamless, and inclusive for everyone.
+			</p>
+		</div>
+
+		<div class="card">
+			<h3 data-translate="true">The Problem</h3>
+			<p data-translate="true">
+				Millions of people worldwide use sign language as their primary means of communication. However, the
+				majority of the hearing population does not understand sign language, creating significant barriers in
+				education, healthcare, employment, and daily interactions.
+			</p>
+		</div>
+
+		<div class="card">
+			<h3 data-translate="true">Our Solution</h3>
+			<p data-translate="true">
+				Gestura leverages advanced computer vision and machine learning technologies to translate sign language
+				gestures into text and speech in real-time. Conversely, it also translates spoken or written language
+				into
+				sign language animations, enabling two-way communication.
+			</p>
+		</div>
+	</div>
+
+	<div class="feature-box">
+		<h2 class="text-center" data-translate="true">Key Features</h2>
+		<div class="about-features">
+			<div class="feature-card-small">
+				<h3 style="color: var(--primary-color);" data-translate="true">Sign to Text</h3>
+				<p data-translate="true">Real-time translation of hand gestures into text using your device's camera.
+				</p>
+			</div>
+			<div class="feature-card-small">
+				<h3 style="color: var(--secondary-color);" data-translate="true">Text to Sign</h3>
+				<p data-translate="true">Convert written text into animated sign language gestures for easy
+					understanding.</p>
+			</div>
+			<div class="feature-card-small">
+				<h3 style="color: var(--primary-color);" data-translate="true">Speech to Text</h3>
+				<p data-translate="true">Voice recognition features to assist in converting spoken words into readable
+					text.</p>
+			</div>
+			<div class="feature-card-small">
+				<h3 style="color: var(--secondary-color);" data-translate="true">Privacy Focused</h3>
+				<p data-translate="true">Secure authentication and profile management to keep your user data safe.</p>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

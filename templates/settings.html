@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Settings{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/settings.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container settings-container">
+    <div class="card settings-card">
+        <div class="settings-header">
+            <h1 data-translate="settingsTitle">Settings</h1>
+            <p class="subheading" data-translate="settingsDescription">
+                Adjust the settings to customize your experience.
+            </p>
+        </div>
+
+        <form method="POST" class="settings-form">
+            <div class="form-group">
+                <label class="form-label" for="languageSelect" data-translate="chooseLanguage">Choose Language</label>
+                <select id="languageSelect" class="form-control">
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="hi">Hindi</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="themeSelect" data-translate="selectTheme">Select Theme</label>
+                <select id="themeSelect" name="theme" class="form-control">
+                    <option value="light" {% if theme=='light' %}selected{% endif %}>Light (Soft)</option>
+                    <option value="dark" {% if theme=='dark' %}selected{% endif %}>Dark (Deep)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cameraSelect" data-translate="cameraSettings">Camera Settings</label>
+                <input type="text" id="cameraSelect" name="camera_quality" placeholder="e.g. High"
+                    class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full" id="saveSettingsBtn" data-translate="saveBtn">
+                Save Changes
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pass API Key safely
+    window.googleTranslateApiKey = {{ google_translate_api_key | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/pages/settings.js') }}"></script>
+{% endblock %}

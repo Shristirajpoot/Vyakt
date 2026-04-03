@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Text to Sign{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/animation_home.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="anim-home-container">
+  <h1 class="anim-home-title">Text to Sign Language</h1>
+  <p class="anim-home-desc">
+    Convert written text or spoken words into animated sign language gestures instantly.
+  </p>
+
+  <div class="feature-cards">
+    <div class="anim-feature">
+      <h3>Type & Translate</h3>
+      <p class="mb-3">Enter text and watch it transform into sign language.</p>
+      <a href="{{ url_for('animation') }}" class="btn btn-primary">Start Typing</a>
+    </div>
+
+    <!-- Future feature placeholder or duplicate link -->
+    <div class="anim-feature">
+      <h3>Voice to Sign</h3>
+      <p class="mb-3">Speak into your microphone and see the signs.</p>
+      <a href="{{ url_for('animation') }}" class="btn btn-primary">Use Voice</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

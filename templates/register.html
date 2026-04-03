@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Register{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container auth-fullscreen">
+    <div class="card auth-card" style="max-width: 500px;">
+        <h2 class="text-center auth-title">Create Account</h2>
+
+        <form method="POST">
+            <!-- CSRF Token -->
+            {{ form.hidden_tag() }}
+
+            <!-- Username -->
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                {{ form.username(class="form-control", placeholder="Choose a username", autocomplete="username",
+                autofocus=true) }}
+                {% for error in form.username.errors %}
+                <small style="color: #ef4444;">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                {{ form.email(class="form-control", placeholder="Enter your email", autocomplete="email") }}
+                {% for error in form.email.errors %}
+                <small style="color: #ef4444;">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                {{ form.password(class="form-control", placeholder="Create a password", autocomplete="new-password") }}
+                {% for error in form.password.errors %}
+                <small style="color: #ef4444;">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label class="form-label" for="confirm">Confirm Password</label>
+                {{ form.confirm(class="form-control", placeholder="Confirm your password",
+                autocomplete="new-password") }}
+                {% for error in form.confirm.errors %}
+                <small style="color: #ef4444;">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+
+            <!-- Redirect Link -->
+            <p class="text-center auth-links">
+                Already have an account? <a href="{{ url_for('login') }}">Login</a>
+            </p>
+        </form>
+    </div>
+</section>
+{% endblock %}

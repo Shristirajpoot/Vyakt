@@ -1,0 +1,26 @@
+/* Auth Pages (Login/Register) */
+
+.auth-fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    /* Centered vertically */
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+}
+
+.auth-title {
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.auth-links {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}

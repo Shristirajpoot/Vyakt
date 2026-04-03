@@ -1,0 +1,43 @@
+/* Home Page (Landing) Styles */
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 70vh;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--bg-color), var(--card-bg));
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-family: 'Outfit', sans-serif;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, var(--primary-color), #bc9dfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    opacity: 0.9;
+}
+
+.cta-group {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-hero {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    border-radius: var(--radius-full);
+}

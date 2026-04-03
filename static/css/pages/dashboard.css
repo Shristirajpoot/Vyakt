@@ -1,0 +1,44 @@
+/* Dashboard Styles */
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.action-buttons .btn {
+    min-width: 180px;
+}
+
+.camera-container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    display: none;
+    /* Hidden by default */
+}
+
+.camera-box {
+    padding: 1rem;
+    background: var(--card-bg);
+    /* Use card-bg even if just an image wrapper */
+}
+
+.camera-feed-img {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+}

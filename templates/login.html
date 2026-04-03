@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Login{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container auth-fullscreen">
+    <div class="card auth-card">
+        <h2 class="text-center auth-title">Welcome Back</h2>
+
+        <form method="POST">
+            <!-- CSRF Token -->
+            {{ form.hidden_tag() }}
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                {{ form.email(class="form-control", placeholder="Enter your email", autocomplete="email",
+                autofocus=true) }}
+                {% for error in form.email.errors %}
+                <small style="color: #ef4444;">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                {{ form.password(class="form-control", placeholder="Enter your password") }}
+                {% for error in form.password.errors %}
+                <small style="color: #ef4444;">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-full">Login</button>
+
+            <!-- Redirect Link -->
+            <p class="text-center auth-links">
+                Don't have an account? <a href="{{ url_for('register') }}">Register</a>
+            </p>
+        </form>
+    </div>
+</section>
+{% endblock %}

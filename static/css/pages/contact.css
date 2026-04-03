@@ -1,0 +1,25 @@
+/* Contact Page Styles */
+.contact-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.contact-info {
+    text-align: left;
+}
+
+.contact-form-card {
+    padding: 2rem;
+}

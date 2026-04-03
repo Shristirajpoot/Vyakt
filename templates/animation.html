@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}GesturaAI - Animation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/animation.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="container animation-container">
+  <div class="text-center mb-3">
+    <h1 style="color: var(--primary-color);">Text to Sign</h1>
+  </div>
+
+  <div class="input-section">
+    <form method="POST" action="{{ url_for('animation') }}" id="animForm">
+      <div class="input-controls">
+        <input type="text" name="sen" class="form-control text-input" placeholder="Type text to translate..."
+          value="{{ text }}">
+        <button type="button" id="micBtn" class="btn btn-outline mic-btn" title="Speak">🎤</button>
+      </div>
+
+      <div class="form-group">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" name="remove_stopwords" checked>
+          <span>Remove stop words (improved accuracy)</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full">Translate</button>
+    </form>
+  </div>
+
+  {% if words %}
+  <div class="animation-display">
+    <!-- Video Player -->
+    <video id="signVideo" class="video-player" controls autoplay muted>
+      <source src="" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <div class="word-list">
+      {% for word in words %}
+      <span class="word-badge">{{ word }}</span>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-3">
+      <p id="currentWordDisplay" style="font-weight: bold; font-size: 1.2rem; min-height: 1.5rem;"></p>
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/pages/animation.js') }}"></script>
+<script>
+  // Embedded playlist logic for the video player
+  // Passing the list of video URLs to JavaScript
+  {% if words %}
+  document.addEventListener('DOMContentLoaded', () => {
+    const videoPlayer = document.getElementById('signVideo');
+    const currentWordDisplay = document.getElementById('currentWordDisplay');
+
+    // Create array of objects: { word: "hello", url: "..." }
+    const playlist = [
+      {% for word in words %}
+            {
+      word: "{{ word }}",
+      // Logic: check if it matches a known asset pattern or assume it's in assets/
+      // app.py returns 'filtered' words which map to filenames usually.
+      url: "{{ url_for('static', filename='assets/' + word + '.mp4') }}"
+    },
+    {% endfor %}
+        ];
+
+  let index = 0;
+
+  function playNext() {
+    if (index < playlist.length) {
+      const item = playlist[index];
+      videoPlayer.src = item.url;
+      currentWordDisplay.textContent = `Signing: "${item.word}"`;
+      videoPlayer.play().catch(e => console.log("Autoplay blocked"));
+      index++;
+    } else {
+      // Determine if we loop or stop
+      index = 0; // Loop? Or stop.
+      // For now, stop.
+      // currentWordDisplay.textContent = "Finished";
+    }
+  }
+
+  videoPlayer.addEventListener('ended', playNext);
+
+  // Start playing
+  if (playlist.length > 0) {
+    playNext();
+  }
+
+  // Handle error (skip missing videos)
+  videoPlayer.addEventListener('error', () => {
+    console.log("Video not found, skipping...");
+    playNext();
+  });
+    });
+  {% endif %}
+</script>
+{% endblock %}
