@@ -85,10 +85,12 @@
         </div>
         <button id="refreshPath" class="btn btn-outline btn-sm">Refresh</button>
       </div>
-      <div id="pathContainer" class="path-container journey-map"></div>
+      <div id="island-container" class="path-container island-journey"></div>
     </section>
   </div>
 </section>
+
+<audio id="victorySound" src="/static/sounds/victory.mp3" preload="auto"></audio>
 
 <div id="rewardToast" class="reward-toast hidden" role="status" aria-live="polite">
   <div class="reward-core">
@@ -128,6 +130,33 @@
       <h4>Lesson Report</h4>
       <p id="summaryStats" class="summary-stats"></p>
       <ul id="summaryInsights" class="summary-insights"></ul>
+    </div>
+
+    <div id="lessonCelebration" class="lesson-celebration hidden" aria-live="polite">
+      <div class="celebration-burst" aria-hidden="true">
+        <span class="burst-dot dot-a"></span>
+        <span class="burst-dot dot-b"></span>
+        <span class="burst-dot dot-c"></span>
+        <span class="burst-dot dot-d"></span>
+      </div>
+      <p class="celebration-kicker">Island Conquered</p>
+      <h4 id="celebrationTitle">Beautiful expression journey.</h4>
+      <p id="celebrationMessage" class="celebration-message"></p>
+      <div class="celebration-metrics">
+        <article>
+          <span class="metric-label">Correct</span>
+          <strong id="celebrationCorrect">0/0</strong>
+        </article>
+        <article>
+          <span class="metric-label">Accuracy</span>
+          <strong id="celebrationAccuracy">0%</strong>
+        </article>
+        <article>
+          <span class="metric-label">Focus</span>
+          <strong id="celebrationFocus">Steady</strong>
+        </article>
+      </div>
+      <p class="celebration-footnote">Tap Finish Lesson below to generate your personalized practice report.</p>
     </div>
 
     <div class="lesson-actions">

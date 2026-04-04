@@ -26,7 +26,8 @@ const ui = {
   rewardText: document.getElementById('rewardText'),
   questList: document.getElementById('questList'),
   badgeList: document.getElementById('badgeList'),
-  pathContainer: document.getElementById('pathContainer'),
+  pathContainer: document.getElementById('island-container') || document.getElementById('pathContainer'),
+  victorySound: document.getElementById('victorySound'),
   refreshPath: document.getElementById('refreshPath'),
   lessonModal: document.getElementById('lessonModal'),
   closeLesson: document.getElementById('closeLesson'),
@@ -49,10 +50,18 @@ const ui = {
   lessonSummary: document.getElementById('lessonSummary'),
   summaryStats: document.getElementById('summaryStats'),
   summaryInsights: document.getElementById('summaryInsights'),
+  lessonCelebration: document.getElementById('lessonCelebration'),
+  celebrationTitle: document.getElementById('celebrationTitle'),
+  celebrationMessage: document.getElementById('celebrationMessage'),
+  celebrationCorrect: document.getElementById('celebrationCorrect'),
+  celebrationAccuracy: document.getElementById('celebrationAccuracy'),
+  celebrationFocus: document.getElementById('celebrationFocus'),
 };
 
 const VIDEO_PLAYBACK_LOOPS = 2;
 const COUNTDOWN_SECONDS = 3;
+const COMPLETION_SOUND_KEY = 'vyakt_island_completed_seen_v1';
+const RENDER_SCROLL_KEY = 'vyakt_island_scrolled_once_v1';
 
 async function getJSON(url, options = {}) {
   const response = await fetch(url, options);
@@ -60,6 +69,38 @@ async function getJSON(url, options = {}) {
     throw new Error(`Request failed: ${response.status}`);
   }
   return response.json();
+}
+
+function loadSeenCompletions() {
+  try {
+    const raw = window.localStorage.getItem(COMPLETION_SOUND_KEY);
+    if (!raw) return new Set();
+    const ids = JSON.parse(raw);
+    if (!Array.isArray(ids)) return new Set();
+    return new Set(ids);
+  } catch (error) {
+    console.warn('Could not read completion cache:', error);
+    return new Set();
+  }
+}
+
+function saveSeenCompletions(seenSet) {
+  try {
+    window.localStorage.setItem(COMPLETION_SOUND_KEY, JSON.stringify(Array.from(seenSet)));
+  } catch (error) {
+    console.warn('Could not persist completion cache:', error);
+  }
+}
+
+function getNewlyCompletedIds(lessons) {
+  const completedNow = lessons.filter((lesson) => lesson.uiStatus === 'completed').map((lesson) => String(lesson.id));
+  const seen = loadSeenCompletions();
+  const newlyCompleted = completedNow.filter((id) => !seen.has(id));
+  return {
+    newlyCompleted: new Set(newlyCompleted),
+    completedNow,
+    seen,
+  };
 }
 
 function renderProfile() {
@@ -144,6 +185,36 @@ function renderLessonSummary(result) {
   ui.lessonSummary.classList.remove('hidden');
 }
 
+function renderCelebrationState(result = null) {
+  if (!state.currentLesson) return;
+  const stats = result?.stats || null;
+  const total = stats?.total_questions ?? (state.currentLesson.quiz.questions || []).length;
+  const correct = stats?.correct_answers ?? state.correctCount ?? 0;
+  const accuracy = stats?.score_percent ?? (total ? Math.round((correct / total) * 100) : 0);
+
+  let focusWord = 'Steady';
+  if (accuracy >= 90) focusWord = 'Exceptional';
+  else if (accuracy >= 75) focusWord = 'Strong';
+  else if (accuracy >= 55) focusWord = 'Growing';
+  else focusWord = 'Resilient';
+
+  const xpGained = stats?.xp_awarded ?? 0;
+  const coinsGained = stats?.coins_awarded ?? 0;
+  const gemsGained = stats?.gems_awarded ?? 0;
+
+  ui.celebrationTitle.textContent = `You completed ${state.currentLesson.lesson.lesson_goal || 'this lesson'}.`;
+  if (stats) {
+    ui.celebrationMessage.textContent =
+      `Beautiful progress: +${xpGained} Expression Score, +${coinsGained} coins, +${gemsGained} gems.`;
+  } else {
+    ui.celebrationMessage.textContent = 'Every sign you practiced today made your voice clearer.';
+  }
+  ui.celebrationCorrect.textContent = `${correct}/${total}`;
+  ui.celebrationAccuracy.textContent = `${accuracy}%`;
+  ui.celebrationFocus.textContent = focusWord;
+  ui.lessonCelebration.classList.remove('hidden');
+}
+
 function renderLeagueCard() {
   const xp = state.profile.xp || 0;
   const tiers = [
@@ -180,7 +251,7 @@ function renderQuests(quests) {
 
 function lessonButtonClass(status) {
   if (status === 'completed') return 'completed';
-  if (status === 'unlocked') return 'unlocked';
+  if (status === 'unlocked') return 'current';
   return 'locked';
 }
 
@@ -342,142 +413,175 @@ async function runQuestionIntroSequence() {
 
 function renderPath() {
   ui.pathContainer.innerHTML = '';
-  const lessons = flattenLessonTrackData();
+  const lessons = flattenLessonTrackData().map((lesson) => ({
+    ...lesson,
+    title: lesson.label,
+    description: usageFromLesson({ goal: lesson.goal }, lesson.section),
+    uiStatus: lessonButtonClass(lesson.status),
+  }));
+
   if (!lessons.length) {
     ui.pathContainer.innerHTML = '<p>Path data unavailable.</p>';
     return;
   }
+  const completionState = getNewlyCompletedIds(lessons);
 
-  const shell = document.createElement('div');
-  shell.className = 'lesson-track-shell';
+  const journey = document.createElement('div');
+  journey.className = 'island-journey-track';
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.classList.add('lesson-track-svg');
+  svg.classList.add('island-path-svg');
+  svg.innerHTML = `
+    <path class="island-path-base"></path>
+    <path class="island-path-progress"></path>
+  `;
 
-  const basePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  basePath.classList.add('track-path-base');
+  const rows = document.createElement('div');
+  rows.className = 'island-rows';
 
-  const activePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  activePath.classList.add('track-path-active');
+  journey.appendChild(svg);
+  journey.appendChild(rows);
+  ui.pathContainer.appendChild(journey);
 
-  const flowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  flowPath.classList.add('track-path-flow');
+  const currentLesson = lessons.find((item) => item.uiStatus === 'current');
 
-  const nodeLayer = document.createElement('div');
-  nodeLayer.className = 'lesson-track-nodes';
+  lessons.forEach((lesson, index) => {
+    const row = document.createElement('div');
+    row.className = `island-row ${lesson.uiStatus}`;
+    if (completionState.newlyCompleted.has(String(lesson.id))) {
+      row.classList.add('newly-completed');
+    }
+    row.setAttribute('data-lesson-id', lesson.id);
 
-  shell.appendChild(svg);
-  shell.appendChild(nodeLayer);
-  svg.appendChild(basePath);
-  svg.appendChild(activePath);
-  svg.appendChild(flowPath);
-  ui.pathContainer.appendChild(shell);
+    const visual = document.createElement('div');
+    visual.className = 'island-visual';
 
-  const width = Math.max(ui.pathContainer.clientWidth - 12, 320);
-  const xCenter = width / 2;
-  const swing = Math.min(108, Math.max(52, width * 0.16));
-  const stepY = 140;
-  const topPadding = 70;
-  const points = lessons.map((_, idx) => ({
-    x: xCenter + (Math.sin((idx * 0.95) + 0.45) * swing),
-    y: topPadding + (idx * stepY),
-  }));
-  const height = points[points.length - 1].y + 82;
+    const islandImg = document.createElement('img');
+    islandImg.src = '/static/images/island.png';
+    islandImg.className = 'island-img';
+    islandImg.alt = `${lesson.title} island`;
 
-  shell.style.height = `${height + 22}px`;
-  svg.setAttribute('viewBox', `0 0 ${width} ${height + 22}`);
-  svg.setAttribute('preserveAspectRatio', 'none');
+    const flagImg = document.createElement('img');
+    flagImg.src = '/static/images/flag.png';
+    flagImg.className = 'flag';
+    flagImg.alt = 'Conquered flag';
 
-  const d = points.reduce((acc, point, idx) => {
-    if (idx === 0) return `M ${point.x} ${point.y}`;
-    const prev = points[idx - 1];
-    const deltaX = point.x - prev.x;
-    const cp1x = prev.x + (deltaX * 0.32);
-    const cp1y = prev.y + (stepY * 0.4);
-    const cp2x = prev.x + (deltaX * 0.68);
-    const cp2y = point.y - (stepY * 0.4);
-    return `${acc} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${point.x} ${point.y}`;
-  }, '');
+    const lockBadge = document.createElement('span');
+    lockBadge.className = 'lock-badge';
+    lockBadge.textContent = '🔒';
 
-  basePath.setAttribute('d', d);
-  activePath.setAttribute('d', d);
-  flowPath.setAttribute('d', d);
-  const pathLength = activePath.getTotalLength();
-  let completedFromStart = 0;
-  for (const lesson of lessons) {
-    if (lesson.status === 'completed') completedFromStart += 1;
-    else break;
-  }
-  const totalSegments = Math.max(1, lessons.length - 1);
-  const progressRatio = Math.max(0, Math.min(1, completedFromStart / totalSegments));
-  const activeLength = pathLength * progressRatio;
-  activePath.style.strokeDasharray = `${pathLength}`;
-  activePath.style.strokeDashoffset = `${pathLength}`;
-  flowPath.style.strokeDasharray = '12 18';
-  flowPath.style.strokeDashoffset = '0';
-  requestAnimationFrame(() => {
-    activePath.classList.add('draw');
-    activePath.style.strokeDashoffset = `${Math.max(0, pathLength - activeLength)}`;
-    flowPath.classList.add('draw');
-  });
-
-  const currentLesson = lessons.find((item) => item.status === 'unlocked');
-  lessons.forEach((lesson, idx) => {
-    const point = points[idx];
-    const node = document.createElement('button');
-    node.className = `path-node ${lessonButtonClass(lesson.status)}`;
-    node.classList.add(`island-v${(idx % 4) + 1}`);
-    node.style.left = `${point.x}px`;
-    node.style.top = `${point.y}px`;
-    node.title = lesson.goal;
-    node.setAttribute('data-lesson-id', lesson.id);
-
-    if (currentLesson && currentLesson.id === lesson.id) {
-      node.classList.add('current-lesson');
+    visual.appendChild(islandImg);
+    visual.appendChild(flagImg);
+    if (lesson.uiStatus === 'locked') {
+      visual.appendChild(lockBadge);
     }
 
-    const icon = document.createElement('span');
-    icon.className = 'node-icon';
-    icon.textContent = lesson.status === 'locked' ? '🔒' : '🤟';
+    const content = document.createElement('div');
+    content.className = 'island-content';
 
-    const label = document.createElement('span');
-    label.className = 'node-label';
-    label.textContent = lesson.label;
+    const title = document.createElement('h3');
+    title.textContent = lesson.title;
 
-    const subtitle = document.createElement('span');
-    subtitle.className = 'node-subtitle';
-    subtitle.textContent = usageFromLesson({ goal: lesson.goal }, lesson.section);
+    const desc = document.createElement('p');
+    desc.textContent = lesson.description;
 
-    node.appendChild(icon);
-    node.appendChild(label);
-    node.appendChild(subtitle);
-    if (lesson.status === 'completed') {
-      const flag = document.createElement('span');
-      flag.className = 'island-flag';
-      flag.innerHTML = '<span class="flag-pole"></span><span class="flag-cloth"></span>';
-      node.appendChild(flag);
-    }
+    content.appendChild(title);
+    content.appendChild(desc);
+    row.appendChild(visual);
+    row.appendChild(content);
 
-    if (lesson.status === 'locked') {
-      node.disabled = true;
-      node.setAttribute('aria-disabled', 'true');
+    if (lesson.uiStatus === 'locked') {
+      row.setAttribute('aria-disabled', 'true');
+    } else if (lesson.uiStatus === 'current') {
+      row.addEventListener('click', () => {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.setTimeout(() => openLesson(lesson.id), 120);
+      });
     } else {
-      node.addEventListener('click', () => {
-        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        window.setTimeout(() => {
-          openLesson(lesson.id);
-        }, 140);
+      row.addEventListener('click', () => {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     }
 
-    nodeLayer.appendChild(node);
-    window.setTimeout(() => node.classList.add('in-view'), idx * 80);
+    rows.appendChild(row);
+    window.setTimeout(() => row.classList.add('in-view'), index * 90);
   });
 
-  if (currentLesson) {
-    const currentNode = nodeLayer.querySelector(`[data-lesson-id="${currentLesson.id}"]`);
-    if (currentNode) {
-      currentNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const drawConnectorPath = () => {
+    const basePath = svg.querySelector('.island-path-base');
+    const progressPath = svg.querySelector('.island-path-progress');
+    const rowEls = Array.from(rows.querySelectorAll('.island-row'));
+    if (rowEls.length < 2 || !basePath || !progressPath) return;
+
+    const svgRect = journey.getBoundingClientRect();
+    const points = rowEls.map((row) => {
+      const visual = row.querySelector('.island-visual');
+      const rect = visual.getBoundingClientRect();
+      return {
+        x: (rect.left + (rect.width / 2)) - svgRect.left,
+        y: (rect.top + (rect.height / 2)) - svgRect.top,
+      };
+    });
+
+    const d = points.reduce((acc, point, idx) => {
+      if (idx === 0) return `M ${point.x} ${point.y}`;
+      const prev = points[idx - 1];
+      const dx = point.x - prev.x;
+      const dy = point.y - prev.y;
+      const turnDir = dx >= 0 ? 1 : -1;
+      const verticalDir = dy >= 0 ? 1 : -1;
+      const corner = Math.max(14, Math.min(32, Math.min(Math.abs(dx), Math.abs(dy)) * 0.22));
+      const midY = prev.y + (dy * 0.55);
+      const y1 = midY - (verticalDir * corner);
+      const x1 = prev.x + (turnDir * corner);
+      const x2 = point.x - (turnDir * corner);
+      const y2 = midY + (verticalDir * corner);
+
+      return `${acc}
+        L ${prev.x} ${y1}
+        Q ${prev.x} ${midY}, ${x1} ${midY}
+        L ${x2} ${midY}
+        Q ${point.x} ${midY}, ${point.x} ${y2}
+        L ${point.x} ${point.y}`;
+    }, '');
+
+    basePath.setAttribute('d', d);
+    progressPath.setAttribute('d', d);
+    const totalLength = progressPath.getTotalLength();
+    const completedFromStart = lessons.findIndex((lesson) => lesson.uiStatus !== 'completed');
+    const completedCount = completedFromStart === -1 ? lessons.length : completedFromStart;
+    const totalSegments = Math.max(1, lessons.length - 1);
+    const progressRatio = Math.max(0, Math.min(1, completedCount / totalSegments));
+    const progressLength = totalLength * progressRatio;
+
+    basePath.style.strokeDasharray = `${totalLength}`;
+    basePath.style.strokeDashoffset = '0';
+    progressPath.style.strokeDasharray = `${totalLength}`;
+    progressPath.style.strokeDashoffset = `${Math.max(0, totalLength - progressLength)}`;
+    progressPath.classList.add('draw');
+  };
+
+  requestAnimationFrame(drawConnectorPath);
+  const onResize = () => drawConnectorPath();
+  window.addEventListener('resize', onResize, { passive: true });
+  window.setTimeout(() => window.removeEventListener('resize', onResize), 120000);
+
+  if (completionState.newlyCompleted.size > 0) {
+    if (ui.victorySound) {
+      const playResult = ui.victorySound.play();
+      if (playResult && typeof playResult.catch === 'function') {
+        playResult.catch(() => {});
+      }
+    }
+    completionState.completedNow.forEach((id) => completionState.seen.add(id));
+    saveSeenCompletions(completionState.seen);
+  }
+
+  if (currentLesson && !window.sessionStorage.getItem(RENDER_SCROLL_KEY)) {
+    const currentRow = rows.querySelector(`[data-lesson-id="${currentLesson.id}"]`);
+    if (currentRow) {
+      currentRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      window.sessionStorage.setItem(RENDER_SCROLL_KEY, '1');
     }
   }
 }
@@ -501,11 +605,14 @@ async function openLesson(lessonId) {
 
   ui.lessonTitle.textContent = payload.lesson.lesson_goal || lessonId;
   ui.lessonIntro.textContent = `Words in this lesson: ${payload.lesson.target_words.join(', ')}`;
+  ui.lessonIntro.classList.remove('hidden');
 
   ui.quizBox.classList.add('hidden');
   ui.lessonSummary.classList.add('hidden');
+  ui.lessonCelebration.classList.add('hidden');
   ui.finishLesson.classList.add('hidden');
   ui.startLesson.classList.remove('hidden');
+  ui.finishLesson.textContent = 'Finish Lesson';
   ui.lessonModal.classList.remove('hidden');
 }
 
@@ -514,11 +621,14 @@ function renderQuestion() {
   const current = questions[state.quizIndex];
   if (!current) {
     ui.quizBox.classList.add('hidden');
+    renderCelebrationState();
     ui.finishLesson.classList.remove('hidden');
     return false;
   }
 
   ui.quizBox.classList.remove('hidden');
+  ui.lessonIntro.classList.add('hidden');
+  ui.lessonCelebration.classList.add('hidden');
   ui.quizStage.classList.remove('is-preview', 'is-ready');
   ui.videoCountdown.classList.add('hidden');
   ui.nextQuestion.classList.add('hidden');
@@ -607,6 +717,7 @@ async function startLessonSession() {
   state.sessionId = startResp.session_id;
 
   ui.startLesson.classList.add('hidden');
+  ui.lessonIntro.classList.add('hidden');
   const hasQuestion = renderQuestion();
   if (hasQuestion) {
     await runQuestionIntroSequence();
@@ -614,37 +725,45 @@ async function startLessonSession() {
 }
 
 async function finishLessonSession() {
-  const result = await getJSON('/api/v1/learning/complete', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      session_id: state.sessionId,
-      lesson_id: state.currentLesson.lesson.lesson_id,
-    }),
-  });
+  ui.finishLesson.disabled = true;
+  ui.finishLesson.textContent = 'Generating Report...';
+  try {
+    const result = await getJSON('/api/v1/learning/complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: state.sessionId,
+        lesson_id: state.currentLesson.lesson.lesson_id,
+      }),
+    });
 
-  state.profile = result.state;
-  renderProfile();
-  await loadPath();
+    state.profile = result.state;
+    renderProfile();
+    await loadPath();
 
-  ui.quizBox.classList.add('hidden');
-  renderLessonSummary(result);
-  ui.finishLesson.classList.add('hidden');
-  ui.startLesson.classList.add('hidden');
-  ui.lessonModal.classList.remove('is-fullscreen');
-  if (document.fullscreenElement && document.exitFullscreen) {
-    try {
-      await document.exitFullscreen();
-    } catch (error) {
-      console.warn('Could not exit fullscreen:', error);
+    ui.quizBox.classList.add('hidden');
+    renderCelebrationState(result);
+    renderLessonSummary(result);
+    ui.finishLesson.classList.add('hidden');
+    ui.startLesson.classList.add('hidden');
+    ui.lessonModal.classList.remove('is-fullscreen');
+    if (document.fullscreenElement && document.exitFullscreen) {
+      try {
+        await document.exitFullscreen();
+      } catch (error) {
+        console.warn('Could not exit fullscreen:', error);
+      }
     }
-  }
 
-  const stats = result.stats || {};
-  showReward(
-    'Lesson Complete',
-    `Score ${stats.score_percent || 0}% | +${stats.xp_awarded || 0} Expression Score | +${stats.coins_awarded || 0} coins`
-  );
+    const stats = result.stats || {};
+    showReward(
+      'Lesson Complete',
+      `Score ${stats.score_percent || 0}% | +${stats.xp_awarded || 0} Expression Score | +${stats.coins_awarded || 0} coins`
+    );
+  } finally {
+    ui.finishLesson.disabled = false;
+    ui.finishLesson.textContent = 'Finish Lesson';
+  }
 }
 
 function buyFreeze(amount, cost) {
