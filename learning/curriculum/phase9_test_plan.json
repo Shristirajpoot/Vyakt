@@ -1,0 +1,43 @@
+{
+  "phase": "Phase 9 Test Plan",
+  "suites": [
+    {
+      "suite": "unit",
+      "target": "service_phase7_8.py",
+      "cases": [
+        "calculate_xp_award",
+        "hearts_delta",
+        "evaluate_badges",
+        "recommend_next_lesson",
+        "build_revision_queue"
+      ]
+    },
+    {
+      "suite": "contract",
+      "target": "phase5/phase7/phase8 endpoints",
+      "cases": [
+        "required_fields_validation",
+        "response_shape_validation",
+        "error_status_codes"
+      ]
+    },
+    {
+      "suite": "integration",
+      "target": "MongoDB collections",
+      "cases": [
+        "xp_ledger_written_on_lesson_complete",
+        "progress_updated_atomically",
+        "leaderboard_refresh_job"
+      ]
+    },
+    {
+      "suite": "e2e",
+      "target": "lesson flow",
+      "cases": [
+        "start_to_finish_lesson",
+        "sublevel_unlock_flow",
+        "streak_recovery_flow"
+      ]
+    }
+  ]
+}

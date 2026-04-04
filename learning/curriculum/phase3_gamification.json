@@ -1,0 +1,100 @@
+{
+  "phase": "Phase 3 - Gamification Economy",
+  "database": "mongodb",
+  "xp_rules": {
+    "lesson_start": 2,
+    "correct_answer": 10,
+    "perfect_lesson_bonus": 25,
+    "sublevel_complete": 80,
+    "level_complete": 200,
+    "daily_goal_complete": 40,
+    "streak_bonus_multiplier": {
+      "1_to_6_days": 1.0,
+      "7_to_29_days": 1.15,
+      "30_plus_days": 1.35
+    }
+  },
+  "hearts_system": {
+    "max_hearts": 5,
+    "heart_loss_on_wrong": 1,
+    "refill": {
+      "full_refill_every_hours": 12,
+      "practice_refill_per_session": 1
+    }
+  },
+  "streak_rules": {
+    "daily_activity_min_lessons": 1,
+    "timezone_source": "user_profile.timezone",
+    "freeze_tokens": {
+      "max_tokens": 2,
+      "grant_every_days": 7,
+      "consume_on_miss": 1
+    }
+  },
+  "badges": [
+    {
+      "id": "first_sign",
+      "name": "First Sign",
+      "trigger": "Complete first lesson"
+    },
+    {
+      "id": "week_warrior",
+      "name": "Week Warrior",
+      "trigger": "7-day streak"
+    },
+    {
+      "id": "precision_pro",
+      "name": "Precision Pro",
+      "trigger": "5 perfect lessons"
+    },
+    {
+      "id": "consistent_learner",
+      "name": "Consistent Learner",
+      "trigger": "30 lessons completed"
+    },
+    {
+      "id": "level_climber",
+      "name": "Level Climber",
+      "trigger": "Complete any level"
+    },
+    {
+      "id": "advanced_runner",
+      "name": "Advanced Runner",
+      "trigger": "Complete advanced level"
+    }
+  ],
+  "daily_quests": [
+    {
+      "id": "dq_1",
+      "title": "Complete 2 lessons",
+      "reward_xp": 30
+    },
+    {
+      "id": "dq_2",
+      "title": "Maintain streak today",
+      "reward_xp": 20
+    },
+    {
+      "id": "dq_3",
+      "title": "Get 8 correct answers",
+      "reward_xp": 35
+    }
+  ],
+  "unlock_logic": {
+    "sublevel_unlock": "score_percent >= 80 and hearts > 0",
+    "level_unlock": "average_sublevel_score >= 75 and previous_level_completed = true",
+    "total_levels": 3,
+    "total_sublevels": 9
+  },
+  "leaderboard": {
+    "windows": [
+      "weekly",
+      "all_time"
+    ],
+    "rank_score_formula": "(total_xp * 0.7) + (streak_days * 8) + (perfect_lessons * 5)",
+    "anti_cheat": {
+      "max_lesson_submissions_per_minute": 8,
+      "duplicate_attempt_hash_block": true
+    }
+  }
+}

@@ -1,0 +1,369 @@
+[
+  {
+    "lesson_id": "b1_foundations_lesson_01",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "target_words": [
+      "A",
+      "B",
+      "Bye",
+      "C",
+      "D",
+      "Day",
+      "E",
+      "F"
+    ],
+    "lesson_goal": "Learn 8 signs in B1 Foundations",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b1_foundations_lesson_02",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "target_words": [
+      "G",
+      "Good",
+      "H",
+      "Happy",
+      "Hello",
+      "Help",
+      "Home",
+      "How"
+    ],
+    "lesson_goal": "Learn 8 signs in B1 Foundations",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b1_foundations_lesson_03",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "target_words": [
+      "I",
+      "J",
+      "K",
+      "L",
+      "Learn",
+      "M",
+      "My",
+      "N"
+    ],
+    "lesson_goal": "Learn 8 signs in B1 Foundations",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b1_foundations_lesson_04",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "target_words": [
+      "Name"
+    ],
+    "lesson_goal": "Learn 1 signs in B1 Foundations",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_01",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "target_words": [
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "Sad",
+      "Safe",
+      "Study"
+    ],
+    "lesson_goal": "Learn 8 signs in B2 Daily Core",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_02",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "target_words": [
+      "T",
+      "Thank",
+      "Time",
+      "U",
+      "V",
+      "W",
+      "We",
+      "Welcome"
+    ],
+    "lesson_goal": "Learn 8 signs in B2 Daily Core",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_03",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "target_words": [
+      "What",
+      "When",
+      "Where",
+      "Who",
+      "Why",
+      "Work",
+      "X",
+      "Y"
+    ],
+    "lesson_goal": "Learn 8 signs in B2 Daily Core",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_04",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "target_words": [
+      "You"
+    ],
+    "lesson_goal": "Learn 1 signs in B2 Daily Core",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_01",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "target_words": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "lesson_goal": "Learn 8 signs in B3 Starter Phrases",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_02",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "target_words": [
+      "8",
+      "9",
+      "Age",
+      "All",
+      "Also",
+      "And",
+      "Ask",
+      "At"
+    ],
+    "lesson_goal": "Learn 8 signs in B3 Starter Phrases",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_03",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "target_words": [
+      "Be",
+      "Busy",
+      "But",
+      "Can",
+      "Come",
+      "Do",
+      "Fight",
+      "Your"
+    ],
+    "lesson_goal": "Learn 8 signs in B3 Starter Phrases",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_04",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "target_words": [
+      "Z"
+    ],
+    "lesson_goal": "Learn 1 signs in B3 Starter Phrases",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "i1_actions_lesson_01",
+    "level": "intermediate",
+    "sublevel": "I1 Actions",
+    "target_words": [
+      "Finish",
+      "Go",
+      "God",
+      "Gold",
+      "Great",
+      "Hand",
+      "Hands",
+      "Her"
+    ],
+    "lesson_goal": "Learn 8 signs in I1 Actions",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "i1_actions_lesson_02",
+    "level": "intermediate",
+    "sublevel": "I1 Actions",
+    "target_words": [
+      "Here",
+      "His",
+      "It",
+      "Laugh",
+      "ME",
+      "Not",
+      "Now"
+    ],
+    "lesson_goal": "Learn 7 signs in I1 Actions",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "i2_concepts_lesson_01",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts",
+    "target_words": [
+      "Of",
+      "On",
+      "Our",
+      "Out",
+      "Pretty",
+      "See",
+      "Self",
+      "Sign"
+    ],
+    "lesson_goal": "Learn 8 signs in I2 Concepts",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "i2_concepts_lesson_02",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts",
+    "target_words": [
+      "Sing",
+      "So",
+      "Stay",
+      "Thank You",
+      "That",
+      "They",
+      "This"
+    ],
+    "lesson_goal": "Learn 7 signs in I2 Concepts",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "i3_sentences_lesson_01",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences",
+    "target_words": [
+      "After",
+      "Again",
+      "Before",
+      "Best",
+      "Better",
+      "Change",
+      "Computer",
+      "Those"
+    ],
+    "lesson_goal": "Learn 8 signs in I3 Sentences",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "i3_sentences_lesson_02",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences",
+    "target_words": [
+      "To",
+      "Type",
+      "Us",
+      "Way",
+      "Which",
+      "Will",
+      "Words"
+    ],
+    "lesson_goal": "Learn 7 signs in I3 Sentences",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "a1_complex_meaning_lesson_01",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning",
+    "target_words": [
+      "Distance",
+      "Eat",
+      "Engineer",
+      "From",
+      "Keep",
+      "Language",
+      "More",
+      "Next"
+    ],
+    "lesson_goal": "Learn 8 signs in A1 Complex Meaning",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "a1_complex_meaning_lesson_02",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning",
+    "target_words": [
+      "Right",
+      "Sound",
+      "Talk"
+    ],
+    "lesson_goal": "Learn 3 signs in A1 Complex Meaning",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "a2_scenario_language_lesson_01",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language",
+    "target_words": [
+      "Against",
+      "Alone",
+      "Beautiful",
+      "Television",
+      "Walk",
+      "Wash",
+      "Whole",
+      "With"
+    ],
+    "lesson_goal": "Learn 8 signs in A2 Scenario Language",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "a2_scenario_language_lesson_02",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language",
+    "target_words": [
+      "Without",
+      "World",
+      "Wrong"
+    ],
+    "lesson_goal": "Learn 3 signs in A2 Scenario Language",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "a3_fluency_sprint_lesson_01",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint",
+    "target_words": [
+      "Cannot",
+      "College",
+      "Do Not",
+      "Does Not",
+      "Glitter",
+      "Homepage",
+      "Invent",
+      "Whose"
+    ],
+    "lesson_goal": "Learn 8 signs in A3 Fluency Sprint",
+    "unlock_rule": "Previous lesson score >= 70%"
+  },
+  {
+    "lesson_id": "a3_fluency_sprint_lesson_02",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint",
+    "target_words": [
+      "Yourself"
+    ],
+    "lesson_goal": "Learn 1 signs in A3 Fluency Sprint",
+    "unlock_rule": "Previous lesson score >= 70%"
+  }
+]

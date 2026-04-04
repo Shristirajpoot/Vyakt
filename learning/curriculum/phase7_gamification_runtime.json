@@ -1,0 +1,147 @@
+{
+  "phase": "Phase 7 - Gamification Runtime",
+  "database": "mongodb",
+  "runtime_rules": {
+    "xp": {
+      "lesson_start": 2,
+      "correct_answer": 10,
+      "perfect_lesson_bonus": 25,
+      "sublevel_complete": 80,
+      "level_complete": 200,
+      "daily_goal_complete": 40,
+      "streak_bonus_multiplier": {
+        "1_to_6_days": 1.0,
+        "7_to_29_days": 1.15,
+        "30_plus_days": 1.35
+      }
+    },
+    "hearts": {
+      "max_hearts": 5,
+      "heart_loss_on_wrong": 1,
+      "refill": {
+        "full_refill_every_hours": 12,
+        "practice_refill_per_session": 1
+      }
+    },
+    "streak": {
+      "daily_activity_min_lessons": 1,
+      "timezone_source": "user_profile.timezone",
+      "freeze_tokens": {
+        "max_tokens": 2,
+        "grant_every_days": 7,
+        "consume_on_miss": 1
+      }
+    },
+    "daily_quests": [
+      {
+        "id": "dq_1",
+        "title": "Complete 2 lessons",
+        "reward_xp": 30
+      },
+      {
+        "id": "dq_2",
+        "title": "Maintain streak today",
+        "reward_xp": 20
+      },
+      {
+        "id": "dq_3",
+        "title": "Get 8 correct answers",
+        "reward_xp": 35
+      }
+    ],
+    "badges": [
+      {
+        "id": "first_sign",
+        "name": "First Sign",
+        "trigger": "Complete first lesson"
+      },
+      {
+        "id": "week_warrior",
+        "name": "Week Warrior",
+        "trigger": "7-day streak"
+      },
+      {
+        "id": "precision_pro",
+        "name": "Precision Pro",
+        "trigger": "5 perfect lessons"
+      },
+      {
+        "id": "consistent_learner",
+        "name": "Consistent Learner",
+        "trigger": "30 lessons completed"
+      },
+      {
+        "id": "level_climber",
+        "name": "Level Climber",
+        "trigger": "Complete any level"
+      },
+      {
+        "id": "advanced_runner",
+        "name": "Advanced Runner",
+        "trigger": "Complete advanced level"
+      }
+    ]
+  },
+  "reward_events": [
+    {
+      "event": "lesson_completed",
+      "emit": [
+        "xp_ledger",
+        "daily_progress",
+        "audit_events"
+      ],
+      "required_payload": [
+        "user_id",
+        "lesson_id",
+        "score_percent",
+        "correct_answers"
+      ]
+    },
+    {
+      "event": "sublevel_unlocked",
+      "emit": [
+        "progress",
+        "audit_events"
+      ],
+      "required_payload": [
+        "user_id",
+        "sublevel",
+        "next_sublevel"
+      ]
+    },
+    {
+      "event": "badge_unlocked",
+      "emit": [
+        "user_badges",
+        "audit_events"
+      ],
+      "required_payload": [
+        "user_id",
+        "badge_id",
+        "reason"
+      ]
+    }
+  ],
+  "leaderboard_runtime": {
+    "windows": [
+      "weekly",
+      "all_time"
+    ],
+    "refresh_policy": "recompute every 15 minutes or on-demand for top 100",
+    "score_formula": "(total_xp * 0.7) + (streak_days * 8) + (perfect_lessons * 5)"
+  },
+  "progression_map": {
+    "sublevel_lesson_counts": {
+      "B1 Foundations": 4,
+      "B2 Daily Core": 4,
+      "B3 Starter Phrases": 4,
+      "I1 Actions": 2,
+      "I2 Concepts": 2,
+      "I3 Sentences": 2,
+      "A1 Complex Meaning": 2,
+      "A2 Scenario Language": 2,
+      "A3 Fluency Sprint": 2
+    },
+    "minimum_completion_for_unlock": 0.8
+  }
+}

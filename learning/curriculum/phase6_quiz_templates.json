@@ -1,0 +1,1822 @@
+[
+  {
+    "lesson_id": "b1_foundations_lesson_01",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "questions": [
+      {
+        "question_id": "b1_foundations_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/A.mp4",
+        "options": [
+          "My",
+          "Where",
+          "A",
+          "Happy"
+        ],
+        "correct": "A",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/B.mp4",
+        "options": [
+          "Also",
+          "M",
+          "B",
+          "L"
+        ],
+        "correct": "B",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Bye.mp4",
+        "options": [
+          "Bye",
+          "Time",
+          "Fight",
+          "V"
+        ],
+        "correct": "Bye",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/C.mp4",
+        "options": [
+          "At",
+          "U",
+          "C",
+          "All"
+        ],
+        "correct": "C",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/D.mp4",
+        "options": [
+          "Also",
+          "Where",
+          "D",
+          "1"
+        ],
+        "correct": "D",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Day.mp4",
+        "options": [
+          "6",
+          "M",
+          "Day",
+          "L"
+        ],
+        "correct": "Day",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b1_foundations_lesson_02",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "questions": [
+      {
+        "question_id": "b1_foundations_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/G.mp4",
+        "options": [
+          "What",
+          "Be",
+          "G",
+          "Day"
+        ],
+        "correct": "G",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Good.mp4",
+        "options": [
+          "4",
+          "Study",
+          "Good",
+          "Why"
+        ],
+        "correct": "Good",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/H.mp4",
+        "options": [
+          "H",
+          "Why",
+          "K",
+          "V"
+        ],
+        "correct": "H",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_02_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Happy.mp4",
+        "options": [
+          "R",
+          "Happy",
+          "4",
+          "Be"
+        ],
+        "correct": "Happy",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_02_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Hello.mp4",
+        "options": [
+          "When",
+          "Hello",
+          "J",
+          "S"
+        ],
+        "correct": "Hello",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_02_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Help.mp4",
+        "options": [
+          "Help",
+          "6",
+          "When",
+          "U"
+        ],
+        "correct": "Help",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b1_foundations_lesson_03",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "questions": [
+      {
+        "question_id": "b1_foundations_lesson_03_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/I.mp4",
+        "options": [
+          "D",
+          "9",
+          "Y",
+          "I"
+        ],
+        "correct": "I",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_03_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/J.mp4",
+        "options": [
+          "J",
+          "Time",
+          "Do",
+          "Y"
+        ],
+        "correct": "J",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_03_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/K.mp4",
+        "options": [
+          "P",
+          "O",
+          "What",
+          "K"
+        ],
+        "correct": "K",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_03_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/L.mp4",
+        "options": [
+          "Also",
+          "4",
+          "9",
+          "L"
+        ],
+        "correct": "L",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_03_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Learn.mp4",
+        "options": [
+          "Learn",
+          "E",
+          "Home",
+          "Happy"
+        ],
+        "correct": "Learn",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b1_foundations_lesson_03_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/M.mp4",
+        "options": [
+          "G",
+          "Also",
+          "M",
+          "7"
+        ],
+        "correct": "M",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b1_foundations_lesson_04",
+    "level": "beginner",
+    "sublevel": "B1 Foundations",
+    "questions": [
+      {
+        "question_id": "b1_foundations_lesson_04_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Name.mp4",
+        "options": [
+          "Do",
+          "Name",
+          "T",
+          "But"
+        ],
+        "correct": "Name",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_01",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "questions": [
+      {
+        "question_id": "b2_daily_core_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/O.mp4",
+        "options": [
+          "Home",
+          "1",
+          "When",
+          "O"
+        ],
+        "correct": "O",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/P.mp4",
+        "options": [
+          "Be",
+          "P",
+          "A",
+          "What"
+        ],
+        "correct": "P",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Q.mp4",
+        "options": [
+          "Work",
+          "T",
+          "Q",
+          "Fight"
+        ],
+        "correct": "Q",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/R.mp4",
+        "options": [
+          "Come",
+          "A",
+          "R",
+          "You"
+        ],
+        "correct": "R",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/S.mp4",
+        "options": [
+          "F",
+          "X",
+          "S",
+          "W"
+        ],
+        "correct": "S",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Sad.mp4",
+        "options": [
+          "G",
+          "H",
+          "Come",
+          "Sad"
+        ],
+        "correct": "Sad",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_02",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "questions": [
+      {
+        "question_id": "b2_daily_core_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/T.mp4",
+        "options": [
+          "M",
+          "T",
+          "Also",
+          "What"
+        ],
+        "correct": "T",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Thank.mp4",
+        "options": [
+          "X",
+          "9",
+          "Thank",
+          "5"
+        ],
+        "correct": "Thank",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Time.mp4",
+        "options": [
+          "How",
+          "R",
+          "Time",
+          "Safe"
+        ],
+        "correct": "Time",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_02_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/U.mp4",
+        "options": [
+          "S",
+          "R",
+          "U",
+          "A"
+        ],
+        "correct": "U",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_02_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/V.mp4",
+        "options": [
+          "D",
+          "G",
+          "V",
+          "S"
+        ],
+        "correct": "V",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_02_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/W.mp4",
+        "options": [
+          "W",
+          "Q",
+          "Where",
+          "Come"
+        ],
+        "correct": "W",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_03",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "questions": [
+      {
+        "question_id": "b2_daily_core_lesson_03_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/What.mp4",
+        "options": [
+          "But",
+          "What",
+          "Safe",
+          "Age"
+        ],
+        "correct": "What",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_03_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/When.mp4",
+        "options": [
+          "When",
+          "3",
+          "Also",
+          "And"
+        ],
+        "correct": "When",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_03_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Where.mp4",
+        "options": [
+          "Where",
+          "F",
+          "9",
+          "Hello"
+        ],
+        "correct": "Where",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_03_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Who.mp4",
+        "options": [
+          "Who",
+          "At",
+          "J",
+          "Name"
+        ],
+        "correct": "Who",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_03_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Why.mp4",
+        "options": [
+          "Why",
+          "Safe",
+          "Busy",
+          "Good"
+        ],
+        "correct": "Why",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b2_daily_core_lesson_03_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Work.mp4",
+        "options": [
+          "Work",
+          "B",
+          "E",
+          "Happy"
+        ],
+        "correct": "Work",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b2_daily_core_lesson_04",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core",
+    "questions": [
+      {
+        "question_id": "b2_daily_core_lesson_04_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/You.mp4",
+        "options": [
+          "And",
+          "Also",
+          "Q",
+          "You"
+        ],
+        "correct": "You",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_01",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "questions": [
+      {
+        "question_id": "b3_starter_phrases_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/0.mp4",
+        "options": [
+          "Y",
+          "You",
+          "A",
+          "0"
+        ],
+        "correct": "0",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/1.mp4",
+        "options": [
+          "Also",
+          "Come",
+          "L",
+          "1"
+        ],
+        "correct": "1",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/2.mp4",
+        "options": [
+          "Welcome",
+          "E",
+          "2",
+          "F"
+        ],
+        "correct": "2",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/3.mp4",
+        "options": [
+          "F",
+          "H",
+          "3",
+          "Your"
+        ],
+        "correct": "3",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/4.mp4",
+        "options": [
+          "How",
+          "9",
+          "4",
+          "Sad"
+        ],
+        "correct": "4",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/5.mp4",
+        "options": [
+          "H",
+          "Z",
+          "All",
+          "5"
+        ],
+        "correct": "5",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_02",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "questions": [
+      {
+        "question_id": "b3_starter_phrases_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/8.mp4",
+        "options": [
+          "Sad",
+          "8",
+          "T",
+          "Welcome"
+        ],
+        "correct": "8",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/9.mp4",
+        "options": [
+          "Be",
+          "Good",
+          "Welcome",
+          "9"
+        ],
+        "correct": "9",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Age.mp4",
+        "options": [
+          "Good",
+          "Fight",
+          "Age",
+          "Q"
+        ],
+        "correct": "Age",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_02_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/All.mp4",
+        "options": [
+          "X",
+          "G",
+          "Safe",
+          "All"
+        ],
+        "correct": "All",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_02_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Also.mp4",
+        "options": [
+          "Help",
+          "W",
+          "B",
+          "Also"
+        ],
+        "correct": "Also",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_02_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/And.mp4",
+        "options": [
+          "Thank",
+          "L",
+          "And",
+          "Help"
+        ],
+        "correct": "And",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_03",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "questions": [
+      {
+        "question_id": "b3_starter_phrases_lesson_03_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Be.mp4",
+        "options": [
+          "Where",
+          "T",
+          "P",
+          "Be"
+        ],
+        "correct": "Be",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_03_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Busy.mp4",
+        "options": [
+          "4",
+          "Busy",
+          "Time",
+          "Happy"
+        ],
+        "correct": "Busy",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_03_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/But.mp4",
+        "options": [
+          "But",
+          "I",
+          "Learn",
+          "T"
+        ],
+        "correct": "But",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_03_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Can.mp4",
+        "options": [
+          "Good",
+          "Can",
+          "B",
+          "Home"
+        ],
+        "correct": "Can",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_03_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Come.mp4",
+        "options": [
+          "K",
+          "5",
+          "X",
+          "Come"
+        ],
+        "correct": "Come",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "b3_starter_phrases_lesson_03_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Do.mp4",
+        "options": [
+          "Why",
+          "Day",
+          "Do",
+          "Work"
+        ],
+        "correct": "Do",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "b3_starter_phrases_lesson_04",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases",
+    "questions": [
+      {
+        "question_id": "b3_starter_phrases_lesson_04_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Z.mp4",
+        "options": [
+          "Do",
+          "Z",
+          "Help",
+          "Why"
+        ],
+        "correct": "Z",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "i1_actions_lesson_01",
+    "level": "intermediate",
+    "sublevel": "I1 Actions",
+    "questions": [
+      {
+        "question_id": "i1_actions_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Finish.mp4",
+        "options": [
+          "Sing",
+          "Finish",
+          "Out",
+          "Pretty"
+        ],
+        "correct": "Finish",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Go.mp4",
+        "options": [
+          "This",
+          "Sing",
+          "Go",
+          "Better"
+        ],
+        "correct": "Go",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/God.mp4",
+        "options": [
+          "Before",
+          "God",
+          "To",
+          "It"
+        ],
+        "correct": "God",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Gold.mp4",
+        "options": [
+          "Sign",
+          "That",
+          "Gold",
+          "After"
+        ],
+        "correct": "Gold",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Great.mp4",
+        "options": [
+          "Stay",
+          "Great",
+          "This",
+          "Best"
+        ],
+        "correct": "Great",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Hand.mp4",
+        "options": [
+          "Which",
+          "Us",
+          "Hand",
+          "Best"
+        ],
+        "correct": "Hand",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "i1_actions_lesson_02",
+    "level": "intermediate",
+    "sublevel": "I1 Actions",
+    "questions": [
+      {
+        "question_id": "i1_actions_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Here.mp4",
+        "options": [
+          "Sing",
+          "Here",
+          "Out",
+          "Words"
+        ],
+        "correct": "Here",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/His.mp4",
+        "options": [
+          "Better",
+          "This",
+          "That",
+          "His"
+        ],
+        "correct": "His",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/It.mp4",
+        "options": [
+          "Again",
+          "It",
+          "Will",
+          "Pretty"
+        ],
+        "correct": "It",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_02_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Laugh.mp4",
+        "options": [
+          "Us",
+          "Finish",
+          "Laugh",
+          "Way"
+        ],
+        "correct": "Laugh",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_02_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/ME.mp4",
+        "options": [
+          "They",
+          "Great",
+          "ME",
+          "That"
+        ],
+        "correct": "ME",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i1_actions_lesson_02_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Not.mp4",
+        "options": [
+          "Best",
+          "Type",
+          "Thank You",
+          "Not"
+        ],
+        "correct": "Not",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "i2_concepts_lesson_01",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts",
+    "questions": [
+      {
+        "question_id": "i2_concepts_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Of.mp4",
+        "options": [
+          "Of",
+          "Will",
+          "ME",
+          "Here"
+        ],
+        "correct": "Of",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/On.mp4",
+        "options": [
+          "Words",
+          "That",
+          "Laugh",
+          "On"
+        ],
+        "correct": "On",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Our.mp4",
+        "options": [
+          "Our",
+          "That",
+          "Not",
+          "Thank You"
+        ],
+        "correct": "Our",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Out.mp4",
+        "options": [
+          "Those",
+          "Out",
+          "Not",
+          "Computer"
+        ],
+        "correct": "Out",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Pretty.mp4",
+        "options": [
+          "Thank You",
+          "Us",
+          "Hand",
+          "Pretty"
+        ],
+        "correct": "Pretty",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/See.mp4",
+        "options": [
+          "See",
+          "ME",
+          "Now",
+          "That"
+        ],
+        "correct": "See",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "i2_concepts_lesson_02",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts",
+    "questions": [
+      {
+        "question_id": "i2_concepts_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Sing.mp4",
+        "options": [
+          "Those",
+          "Of",
+          "Sing",
+          "Great"
+        ],
+        "correct": "Sing",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/So.mp4",
+        "options": [
+          "To",
+          "Before",
+          "So",
+          "Again"
+        ],
+        "correct": "So",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Stay.mp4",
+        "options": [
+          "Now",
+          "Stay",
+          "Hands",
+          "Better"
+        ],
+        "correct": "Stay",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_02_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Thank You.mp4",
+        "options": [
+          "Thank You",
+          "Which",
+          "Of",
+          "Gold"
+        ],
+        "correct": "Thank You",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_02_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/That.mp4",
+        "options": [
+          "Us",
+          "Computer",
+          "Which",
+          "That"
+        ],
+        "correct": "That",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i2_concepts_lesson_02_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/They.mp4",
+        "options": [
+          "Which",
+          "Change",
+          "It",
+          "They"
+        ],
+        "correct": "They",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "i3_sentences_lesson_01",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences",
+    "questions": [
+      {
+        "question_id": "i3_sentences_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/After.mp4",
+        "options": [
+          "After",
+          "Of",
+          "Our",
+          "Way"
+        ],
+        "correct": "After",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Again.mp4",
+        "options": [
+          "They",
+          "Great",
+          "Our",
+          "Again"
+        ],
+        "correct": "Again",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Before.mp4",
+        "options": [
+          "Which",
+          "Before",
+          "See",
+          "Self"
+        ],
+        "correct": "Before",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Best.mp4",
+        "options": [
+          "Now",
+          "His",
+          "Best",
+          "So"
+        ],
+        "correct": "Best",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Better.mp4",
+        "options": [
+          "Thank You",
+          "Better",
+          "Self",
+          "Which"
+        ],
+        "correct": "Better",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Change.mp4",
+        "options": [
+          "Not",
+          "Thank You",
+          "Change",
+          "So"
+        ],
+        "correct": "Change",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "i3_sentences_lesson_02",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences",
+    "questions": [
+      {
+        "question_id": "i3_sentences_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/To.mp4",
+        "options": [
+          "After",
+          "To",
+          "Finish",
+          "Sign"
+        ],
+        "correct": "To",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Type.mp4",
+        "options": [
+          "Now",
+          "Again",
+          "Type",
+          "Better"
+        ],
+        "correct": "Type",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Us.mp4",
+        "options": [
+          "Us",
+          "So",
+          "Again",
+          "Go"
+        ],
+        "correct": "Us",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_02_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Way.mp4",
+        "options": [
+          "Way",
+          "Here",
+          "It",
+          "This"
+        ],
+        "correct": "Way",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_02_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Which.mp4",
+        "options": [
+          "Which",
+          "That",
+          "Hand",
+          "Here"
+        ],
+        "correct": "Which",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "i3_sentences_lesson_02_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Will.mp4",
+        "options": [
+          "Will",
+          "On",
+          "See",
+          "So"
+        ],
+        "correct": "Will",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "a1_complex_meaning_lesson_01",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning",
+    "questions": [
+      {
+        "question_id": "a1_complex_meaning_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Distance.mp4",
+        "options": [
+          "Wash",
+          "Distance",
+          "With",
+          "World"
+        ],
+        "correct": "Distance",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Eat.mp4",
+        "options": [
+          "Eat",
+          "College",
+          "Does Not",
+          "Right"
+        ],
+        "correct": "Eat",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Engineer.mp4",
+        "options": [
+          "Invent",
+          "Engineer",
+          "Sound",
+          "Talk"
+        ],
+        "correct": "Engineer",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/From.mp4",
+        "options": [
+          "Homepage",
+          "Alone",
+          "Right",
+          "From"
+        ],
+        "correct": "From",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Keep.mp4",
+        "options": [
+          "Against",
+          "Whose",
+          "Keep",
+          "Glitter"
+        ],
+        "correct": "Keep",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Language.mp4",
+        "options": [
+          "Homepage",
+          "Beautiful",
+          "Without",
+          "Language"
+        ],
+        "correct": "Language",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "a1_complex_meaning_lesson_02",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning",
+    "questions": [
+      {
+        "question_id": "a1_complex_meaning_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Right.mp4",
+        "options": [
+          "Right",
+          "From",
+          "Wrong",
+          "Distance"
+        ],
+        "correct": "Right",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Sound.mp4",
+        "options": [
+          "Walk",
+          "Sound",
+          "More",
+          "Does Not"
+        ],
+        "correct": "Sound",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a1_complex_meaning_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Talk.mp4",
+        "options": [
+          "Talk",
+          "Does Not",
+          "Homepage",
+          "From"
+        ],
+        "correct": "Talk",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "a2_scenario_language_lesson_01",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language",
+    "questions": [
+      {
+        "question_id": "a2_scenario_language_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Against.mp4",
+        "options": [
+          "Glitter",
+          "Eat",
+          "Without",
+          "Against"
+        ],
+        "correct": "Against",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Alone.mp4",
+        "options": [
+          "Alone",
+          "Do Not",
+          "Invent",
+          "Engineer"
+        ],
+        "correct": "Alone",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Beautiful.mp4",
+        "options": [
+          "From",
+          "Beautiful",
+          "College",
+          "Wrong"
+        ],
+        "correct": "Beautiful",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Television.mp4",
+        "options": [
+          "Television",
+          "Keep",
+          "Yourself",
+          "Wrong"
+        ],
+        "correct": "Television",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Walk.mp4",
+        "options": [
+          "Does Not",
+          "Walk",
+          "College",
+          "Homepage"
+        ],
+        "correct": "Walk",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Wash.mp4",
+        "options": [
+          "Next",
+          "Talk",
+          "Engineer",
+          "Wash"
+        ],
+        "correct": "Wash",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "a2_scenario_language_lesson_02",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language",
+    "questions": [
+      {
+        "question_id": "a2_scenario_language_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Without.mp4",
+        "options": [
+          "Homepage",
+          "Television",
+          "With",
+          "Without"
+        ],
+        "correct": "Without",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_02_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/World.mp4",
+        "options": [
+          "Walk",
+          "World",
+          "Yourself",
+          "Talk"
+        ],
+        "correct": "World",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a2_scenario_language_lesson_02_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Wrong.mp4",
+        "options": [
+          "Right",
+          "Against",
+          "Invent",
+          "Wrong"
+        ],
+        "correct": "Wrong",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "a3_fluency_sprint_lesson_01",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint",
+    "questions": [
+      {
+        "question_id": "a3_fluency_sprint_lesson_01_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Cannot.mp4",
+        "options": [
+          "Wash",
+          "Whole",
+          "Distance",
+          "Cannot"
+        ],
+        "correct": "Cannot",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a3_fluency_sprint_lesson_01_q02",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/College.mp4",
+        "options": [
+          "Beautiful",
+          "College",
+          "Whole",
+          "Walk"
+        ],
+        "correct": "College",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a3_fluency_sprint_lesson_01_q03",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Do Not.mp4",
+        "options": [
+          "Do Not",
+          "Walk",
+          "World",
+          "Yourself"
+        ],
+        "correct": "Do Not",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a3_fluency_sprint_lesson_01_q04",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Does Not.mp4",
+        "options": [
+          "Does Not",
+          "Sound",
+          "Next",
+          "Alone"
+        ],
+        "correct": "Does Not",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a3_fluency_sprint_lesson_01_q05",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Glitter.mp4",
+        "options": [
+          "Glitter",
+          "Wash",
+          "Whole",
+          "Walk"
+        ],
+        "correct": "Glitter",
+        "xp_on_correct": 10
+      },
+      {
+        "question_id": "a3_fluency_sprint_lesson_01_q06",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Homepage.mp4",
+        "options": [
+          "Television",
+          "Against",
+          "Yourself",
+          "Homepage"
+        ],
+        "correct": "Homepage",
+        "xp_on_correct": 10
+      }
+    ]
+  },
+  {
+    "lesson_id": "a3_fluency_sprint_lesson_02",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint",
+    "questions": [
+      {
+        "question_id": "a3_fluency_sprint_lesson_02_q01",
+        "type": "identify_sign_from_video",
+        "prompt": "Watch the sign and choose the correct word.",
+        "asset": "static/assets/Yourself.mp4",
+        "options": [
+          "Yourself",
+          "From",
+          "Next",
+          "College"
+        ],
+        "correct": "Yourself",
+        "xp_on_correct": 10
+      }
+    ]
+  }
+]

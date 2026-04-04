@@ -1,0 +1,172 @@
+{
+  "phase": "Phase 5 - Backend Data Model and APIs",
+  "database": "mongodb",
+  "service": {
+    "name": "learning_service",
+    "version": "v1",
+    "base_path": "/api/v1"
+  },
+  "collections": {
+    "lesson_sessions": {
+      "fields": [
+        "_id",
+        "user_id",
+        "lesson_id",
+        "sublevel",
+        "status",
+        "started_at",
+        "finished_at"
+      ],
+      "indexes": [
+        "user_id_started_at_desc",
+        "lesson_id"
+      ]
+    },
+    "question_attempts": {
+      "fields": [
+        "_id",
+        "session_id",
+        "question_id",
+        "selected",
+        "correct",
+        "response_ms",
+        "created_at"
+      ],
+      "indexes": [
+        "session_id",
+        "created_at_desc"
+      ]
+    },
+    "xp_ledger": {
+      "fields": [
+        "_id",
+        "user_id",
+        "reason",
+        "xp_delta",
+        "metadata",
+        "created_at"
+      ],
+      "indexes": [
+        "user_id_created_at_desc",
+        "reason"
+      ]
+    },
+    "daily_progress": {
+      "fields": [
+        "_id",
+        "user_id",
+        "date",
+        "lessons_completed",
+        "correct_answers",
+        "xp_gained"
+      ],
+      "indexes": [
+        "user_id_date_unique"
+      ]
+    }
+  },
+  "api_contracts": [
+    {
+      "name": "get_home_progress",
+      "method": "GET",
+      "path": "/api/v1/progress/home",
+      "response": {
+        "current_level": "beginner",
+        "current_sublevel": "B1 Foundations",
+        "xp": 220,
+        "hearts": 5,
+        "streak_days": 5,
+        "next_lesson_id": "b1_foundations_lesson_01"
+      }
+    },
+    {
+      "name": "start_lesson",
+      "method": "POST",
+      "path": "/api/v1/lesson/start",
+      "body": {
+        "sublevel": "B1 Foundations",
+        "lesson_id": "b1_foundations_lesson_01"
+      },
+      "response": {
+        "session_id": "sess_xxx",
+        "xp_grant": 2
+      }
+    },
+    {
+      "name": "submit_answer",
+      "method": "POST",
+      "path": "/api/v1/lesson/answer",
+      "body": {
+        "session_id": "sess_xxx",
+        "question_id": "q01",
+        "selected": "Hello"
+      },
+      "response": {
+        "correct": true,
+        "xp_delta": 10,
+        "hearts_left": 4
+      }
+    },
+    {
+      "name": "finish_lesson",
+      "method": "POST",
+      "path": "/api/v1/lesson/finish",
+      "body": {
+        "session_id": "sess_xxx"
+      },
+      "response": {
+        "score_percent": 84,
+        "badges_unlocked": [
+          "first_sign"
+        ],
+        "sublevel_unlocked": true
+      }
+    },
+    {
+      "name": "get_daily_quests",
+      "method": "GET",
+      "path": "/api/v1/quests/today",
+      "response": {
+        "quests": [
+          {
+            "id": "dq_1",
+            "title": "Complete 2 lessons",
+            "reward_xp": 30
+          },
+          {
+            "id": "dq_2",
+            "title": "Maintain streak today",
+            "reward_xp": 20
+          },
+          {
+            "id": "dq_3",
+            "title": "Get 8 correct answers",
+            "reward_xp": 35
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_weekly_leaderboard",
+      "method": "GET",
+      "path": "/api/v1/leaderboard/weekly",
+      "response": {
+        "window": "weekly",
+        "items": []
+      }
+    }
+  ],
+  "state_machine": {
+    "lesson_session_states": [
+      "started",
+      "in_progress",
+      "completed",
+      "abandoned"
+    ],
+    "transitions": [
+      "started -> in_progress on first answer",
+      "in_progress -> completed on finish endpoint",
+      "in_progress -> abandoned on inactivity timeout"
+    ]
+  }
+}

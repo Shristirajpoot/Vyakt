@@ -1,0 +1,127 @@
+{
+  "phase": "Phase 9 - QA, Analytics, and Demo Story",
+  "database": "mongodb",
+  "qa_matrix": {
+    "gamification_tests": [
+      "xp_award_correct_answer",
+      "perfect_lesson_bonus",
+      "streak_increment_same_day_guard",
+      "streak_freeze_consumption",
+      "badge_unlock_thresholds"
+    ],
+    "progression_tests": [
+      "sublevel_unlock_at_80_percent",
+      "level_unlock_at_75_percent_average",
+      "hearts_block_when_zero"
+    ],
+    "api_tests": [
+      "get_home_progress",
+      "start_lesson",
+      "submit_answer",
+      "finish_lesson",
+      "get_daily_quests",
+      "get_weekly_leaderboard"
+    ],
+    "personalization_tests": [
+      "next_lesson_prefers_weak_skills",
+      "revision_queue_recency_priority",
+      "weekly_summary_fields_complete"
+    ]
+  },
+  "analytics_events": [
+    {
+      "event": "lesson_started",
+      "collection": "audit_events",
+      "properties": [
+        "user_id",
+        "lesson_id",
+        "sublevel",
+        "timestamp"
+      ]
+    },
+    {
+      "event": "lesson_completed",
+      "collection": "lesson_attempts",
+      "properties": [
+        "user_id",
+        "lesson_id",
+        "score_percent",
+        "correct_answers",
+        "xp_awarded"
+      ]
+    },
+    {
+      "event": "badge_unlocked",
+      "collection": "user_badges",
+      "properties": [
+        "user_id",
+        "badge_id",
+        "awarded_at"
+      ]
+    },
+    {
+      "event": "recommendation_served",
+      "collection": "audit_events",
+      "properties": [
+        "user_id",
+        "recommended_lesson_id",
+        "reason",
+        "timestamp"
+      ]
+    }
+  ],
+  "kpis": {
+    "d1_retention_target": ">= 45%",
+    "lesson_completion_target": ">= 70%",
+    "avg_accuracy_target": ">= 75%",
+    "weekly_active_learners_target": ">= 30 for demo cohort",
+    "streak_7day_target": ">= 25% users"
+  },
+  "dashboards": {
+    "product": [
+      "daily_active_learners",
+      "lesson_completion_rate",
+      "median_score_percent",
+      "streak_distribution"
+    ],
+    "quality": [
+      "api_error_rate",
+      "invalid_payload_rate",
+      "quiz_render_latency_ms"
+    ],
+    "learning_outcomes": [
+      "top_improved_words",
+      "most_missed_words",
+      "level_completion_funnel"
+    ]
+  },
+  "demo_storyboard": [
+    "User signs in and resumes streak",
+    "Completes one lesson and earns XP",
+    "Unlocks badge and next sublevel",
+    "Personalized next-lesson recommendation appears",
+    "Leaderboard and weekly summary shown"
+  ],
+  "config_references": {
+    "xp_rules": {
+      "lesson_start": 2,
+      "correct_answer": 10,
+      "perfect_lesson_bonus": 25,
+      "sublevel_complete": 80,
+      "level_complete": 200,
+      "daily_goal_complete": 40,
+      "streak_bonus_multiplier": {
+        "1_to_6_days": 1.0,
+        "7_to_29_days": 1.15,
+        "30_plus_days": 1.35
+      }
+    },
+    "personalization": {
+      "weak_skill_threshold": 0.65,
+      "repeat_missed_words_weight": 0.55,
+      "recent_mistakes_boost": 0.3,
+      "streak_preservation_boost": 0.15,
+      "next_lesson_strategy": "prefer current sublevel; if mastery >= 85% then unlock next"
+    }
+  }
+}

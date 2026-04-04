@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Vyakt - Gamified Learning{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/learning.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="learning-shell">
+  <div class="learning-top">
+    <div class="identity-block card">
+      <p class="kicker">Learning Arena</p>
+      <h1>Sign Quest Path</h1>
+      <p>Practice bite-sized lessons, hold your streak, and unlock new units as you improve.</p>
+      <div class="hero-actions">
+        <a href="#unit-path" class="btn btn-primary">Continue Journey</a>
+        <button id="claimReward" class="btn btn-outline">Claim Daily Chest</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card card">
+        <p>XP</p>
+        <h3 id="xpValue">0</h3>
+      </article>
+      <article class="stat-card card">
+        <p>Streak</p>
+        <h3 id="streakValue">0 days</h3>
+      </article>
+      <article class="stat-card card">
+        <p>Hearts</p>
+        <h3 id="heartValue">5</h3>
+      </article>
+      <article class="stat-card card">
+        <p>Badges</p>
+        <h3 id="badgeValue">0</h3>
+      </article>
+    </div>
+  </div>
+
+  <div class="learning-body">
+    <aside class="quest-panel card">
+      <h2>Daily Quests</h2>
+      <ul id="questList" class="quest-list"></ul>
+
+      <section class="league-card">
+        <h3>Weekly League</h3>
+        <p id="leagueTier">Bronze League</p>
+        <div class="league-progress-track">
+          <span id="leagueProgressBar"></span>
+        </div>
+        <small id="leagueHint">Win 120 XP this week to move to Silver.</small>
+      </section>
+
+      <section class="shop-card">
+        <h3>Streak Freeze Shop</h3>
+        <p>Protect your streak when you miss a day.</p>
+        <div class="shop-actions">
+          <button id="buyFreezeOne" class="btn btn-outline btn-sm">Buy 1 Freeze (120 XP)</button>
+          <button id="buyFreezeTwo" class="btn btn-outline btn-sm">Buy 2 Freeze (200 XP)</button>
+        </div>
+        <p class="shop-balance">Owned: <strong id="freezeOwned">0</strong></p>
+      </section>
+
+      <h2 class="mt">Recent Badges</h2>
+      <ul id="badgeList" class="badge-list"></ul>
+    </aside>
+
+    <section id="unit-path" class="path-panel card">
+      <div class="path-head">
+        <div>
+          <h2>Level Path</h2>
+          <p class="path-subtitle">Follow the curved journey and clear each lesson node.</p>
+        </div>
+        <button id="refreshPath" class="btn btn-outline btn-sm">Refresh</button>
+      </div>
+      <div id="pathContainer" class="path-container journey-map"></div>
+    </section>
+  </div>
+</section>
+
+<div id="rewardToast" class="reward-toast hidden" role="status" aria-live="polite">
+  <div class="reward-core">
+    <span class="reward-burst"></span>
+    <h4 id="rewardTitle">Reward Unlocked!</h4>
+    <p id="rewardText">+0 XP</p>
+  </div>
+</div>
+
+<div id="lessonModal" class="lesson-modal hidden" role="dialog" aria-modal="true" aria-label="Lesson Player">
+  <div id="lessonDialog" class="lesson-dialog card">
+    <div class="lesson-head">
+      <h3 id="lessonTitle">Lesson</h3>
+      <button id="closeLesson" class="ghost-btn">Close</button>
+    </div>
+
+    <div id="lessonIntro" class="lesson-intro"></div>
+
+    <div id="quizBox" class="quiz-box hidden">
+      <p id="quizPrompt"></p>
+      <div id="quizStage" class="quiz-stage">
+        <div id="videoCountdown" class="video-countdown hidden" aria-live="polite">3</div>
+        <video id="quizVideo" controls preload="metadata"></video>
+        <p id="videoHint" class="video-hint">Watch the clip, then answer the question.</p>
+      </div>
+      <div id="quizOptionsWrap" class="quiz-options-wrap hidden">
+        <div id="quizOptions" class="quiz-options"></div>
+      </div>
+      <div class="quiz-actions">
+        <button id="submitAnswer" class="btn btn-primary btn-sm">Submit</button>
+        <button id="nextQuestion" class="btn btn-outline btn-sm hidden">Next</button>
+      </div>
+      <p id="quizFeedback" class="quiz-feedback"></p>
+    </div>
+
+    <div id="lessonSummary" class="lesson-summary hidden">
+      <h4>Lesson Report</h4>
+      <p id="summaryStats" class="summary-stats"></p>
+      <ul id="summaryInsights" class="summary-insights"></ul>
+    </div>
+
+    <div class="lesson-actions">
+      <button id="startLesson" class="btn btn-primary">Start Lesson</button>
+      <button id="finishLesson" class="btn btn-outline hidden">Finish Lesson</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/pages/learning.js') }}"></script>
+{% endblock %}

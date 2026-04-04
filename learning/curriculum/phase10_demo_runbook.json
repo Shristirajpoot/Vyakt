@@ -1,0 +1,25 @@
+{
+  "phase": "Phase 10 Demo Runbook",
+  "t_minus_60": [
+    "seed demo user and progress",
+    "verify MongoDB connectivity",
+    "warm up lesson assets"
+  ],
+  "t_minus_15": [
+    "open home, lesson, profile, leaderboard tabs",
+    "reset browser cache",
+    "verify backup internet option"
+  ],
+  "live_demo": [
+    "show current streak and daily quest",
+    "start lesson and answer questions",
+    "finish lesson and show rewards",
+    "show recommendation engine",
+    "show leaderboard and weekly summary"
+  ],
+  "if_failure": [
+    "switch to pre-recorded fallback video",
+    "load pre-seeded analytics snapshot",
+    "continue with architecture walkthrough"
+  ]
+}

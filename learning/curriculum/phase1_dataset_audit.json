@@ -1,0 +1,19 @@
+{
+  "phase": "Phase 1 - Dataset Audit",
+  "source": "static/assets",
+  "summary": {
+    "total": 151,
+    "alphabet": 26,
+    "number": 10,
+    "word": 112,
+    "phrase": 3,
+    "beginner": 75,
+    "intermediate": 45,
+    "advanced": 31
+  },
+  "difficulty_rubric": {
+    "base": "length + token_count",
+    "beginner_bonus": "basic daily terms are easier",
+    "advanced_bonus": "negation/abstract/multi-word terms are harder"
+  }
+}

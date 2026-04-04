@@ -1,0 +1,153 @@
+{
+  "database": "gestura_learning",
+  "collections": {
+    "users": {
+      "description": "Auth profile and user role",
+      "required_fields": [
+        "_id",
+        "email",
+        "username",
+        "role",
+        "created_at"
+      ],
+      "indexes": [
+        "email_unique",
+        "role"
+      ]
+    },
+    "learning_paths": {
+      "description": "Static phase2 structure for levels and sublevels",
+      "required_fields": [
+        "_id",
+        "level",
+        "sublevel",
+        "word_ids",
+        "unlock_rule"
+      ],
+      "indexes": [
+        "level",
+        "sublevel"
+      ]
+    },
+    "vocabulary": {
+      "description": "All dataset words and metadata",
+      "required_fields": [
+        "_id",
+        "word",
+        "asset_file",
+        "difficulty_score",
+        "level"
+      ],
+      "indexes": [
+        "word_unique",
+        "level",
+        "sublevel"
+      ]
+    },
+    "lesson_attempts": {
+      "description": "Per-lesson answer data",
+      "required_fields": [
+        "_id",
+        "user_id",
+        "sublevel",
+        "score_percent",
+        "answers",
+        "created_at"
+      ],
+      "indexes": [
+        "user_id_created_at",
+        "sublevel"
+      ]
+    },
+    "progress": {
+      "description": "Current user progression snapshot",
+      "required_fields": [
+        "_id",
+        "user_id",
+        "current_level",
+        "current_sublevel",
+        "xp",
+        "hearts",
+        "streak_days"
+      ],
+      "indexes": [
+        "user_id_unique",
+        "xp_desc"
+      ]
+    },
+    "badges": {
+      "description": "Badge catalog",
+      "required_fields": [
+        "_id",
+        "badge_id",
+        "name",
+        "trigger"
+      ],
+      "indexes": [
+        "badge_id_unique"
+      ]
+    },
+    "user_badges": {
+      "description": "Awarded badges",
+      "required_fields": [
+        "_id",
+        "user_id",
+        "badge_id",
+        "awarded_at"
+      ],
+      "indexes": [
+        "user_id",
+        "badge_id"
+      ]
+    },
+    "quests": {
+      "description": "Daily and weekly quests",
+      "required_fields": [
+        "_id",
+        "quest_id",
+        "title",
+        "reward_xp",
+        "window"
+      ],
+      "indexes": [
+        "quest_id_unique",
+        "window"
+      ]
+    },
+    "leaderboards": {
+      "description": "Cached ranking board documents",
+      "required_fields": [
+        "_id",
+        "window",
+        "user_id",
+        "rank_score",
+        "updated_at"
+      ],
+      "indexes": [
+        "window_rank_score_desc",
+        "user_id"
+      ]
+    },
+    "audit_events": {
+      "description": "Policy and gameplay audit trail",
+      "required_fields": [
+        "_id",
+        "user_id",
+        "event_type",
+        "status",
+        "reason",
+        "timestamp"
+      ],
+      "indexes": [
+        "timestamp_desc",
+        "user_id",
+        "event_type"
+      ]
+    }
+  },
+  "notes": {
+    "source_levels_count": 3,
+    "write_strategy": "append-only for attempts and audit_events",
+    "consistency": "single-document updates for progress, transaction for reward + progress when needed"
+  }
+}

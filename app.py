@@ -235,6 +235,333 @@ def process_text_for_animation(text, remove_stopwords=True):
     return final_words
 
 
+LEARNING_CURRICULUM_ROOT = Path(app.root_path) / 'learning' / 'curriculum'
+LEARNING_LEVELS_FILE = LEARNING_CURRICULUM_ROOT / 'phase2_levels.json'
+LEARNING_LESSONS_FILE = LEARNING_CURRICULUM_ROOT / 'phase6_lesson_packs.json'
+LEARNING_QUIZ_FILE = LEARNING_CURRICULUM_ROOT / 'phase6_quiz_templates.json'
+
+
+def _utc_now():
+    return datetime.utcnow()
+
+
+def _learning_user_key():
+    if session.get('user_id'):
+        return f"user:{session['user_id']}"
+    if session.get('email'):
+        return f"email:{session['email']}"
+    return f"guest:{request.remote_addr or 'local'}"
+
+
+def _read_json_file(path_obj, fallback):
+    try:
+        if path_obj.exists():
+            with path_obj.open('r', encoding='utf-8') as fh:
+                return json.load(fh)
+    except Exception:
+        pass
+    return fallback
+
+
+def _default_learning_progress():
+    return {
+        'xp': 0,
+        'coins': 0,
+        'gems': 0,
+        'hearts': 5,
+        'streak_days': 0,
+        'streak_freezes': 0,
+        'badges': [],
+        'completed_lessons': [],
+        'total_lesson_attempts': 0,
+        'total_questions_answered': 0,
+        'total_correct_answers': 0,
+        'total_xp_earned': 0,
+        'last_activity_day': None,
+    }
+
+
+def _compute_next_streak(previous_streak, last_activity_day):
+    today = datetime.utcnow().date()
+    if not last_activity_day:
+        return 1
+
+    try:
+        last_day = datetime.strptime(last_activity_day, '%Y-%m-%d').date()
+    except Exception:
+        return 1
+
+    gap_days = (today - last_day).days
+    if gap_days <= 0:
+        # Same day completion does not inflate streak.
+        return int(previous_streak or 0)
+    if gap_days == 1:
+        return int(previous_streak or 0) + 1
+    return 1
+
+
+def _get_learning_progress(user_key):
+    progress = db.learning_progress.find_one({'user_key': user_key}, {'_id': 0, 'user_key': 0})
+    base = _default_learning_progress()
+    if progress:
+        base.update(progress)
+    return base
+
+
+def _save_learning_progress(user_key, payload):
+    payload = dict(payload)
+    payload['updated_at'] = _utc_now()
+    db.learning_progress.update_one({'user_key': user_key}, {'$set': payload}, upsert=True)
+
+
+def _ensure_learning_indexes_and_seed_data():
+    db.learning_progress.create_index('user_key', unique=True, name='learning_progress_user_key_unique')
+    db.learning_progress.create_index('xp', name='learning_progress_xp_idx')
+
+    db.learning_sessions.create_index('session_id', unique=True, name='learning_session_id_unique')
+    db.learning_sessions.create_index([('user_key', 1), ('lesson_id', 1), ('started_at', -1)], name='learning_session_user_lesson_idx')
+
+    db.learning_answer_attempts.create_index([('session_id', 1), ('question_id', 1), ('attempt_index', 1)], name='learning_answer_attempt_idx')
+    db.learning_answer_attempts.create_index([('user_key', 1), ('created_at', -1)], name='learning_answer_user_time_idx')
+
+    db.learning_lesson_reports.create_index([('user_key', 1), ('lesson_id', 1), ('completed_at', -1)], name='learning_report_user_lesson_idx')
+
+    db.learning_quests.create_index('quest_id', unique=True, name='learning_quest_id_unique')
+    db.learning_quests.create_index('window', name='learning_quest_window_idx')
+
+    if db.learning_quests.count_documents({}) == 0:
+        db.learning_quests.insert_many([
+            {'quest_id': 'dq_1', 'title': 'Complete 2 lessons', 'reward_xp': 30, 'window': 'daily', 'active': True},
+            {'quest_id': 'dq_2', 'title': 'Maintain streak today', 'reward_xp': 20, 'window': 'daily', 'active': True},
+            {'quest_id': 'dq_3', 'title': 'Get 8 correct answers', 'reward_xp': 35, 'window': 'daily', 'active': True},
+        ])
+
+
+def _build_fallback_memory_tips(incorrect_items):
+    def _is_letter_or_digit(token):
+        s = str(token or '').strip()
+        return len(s) == 1 and s.isalnum()
+
+    def _tailored_tip(correct, selected):
+        correct = str(correct or '').strip()
+        selected = str(selected or '').strip()
+
+        if _is_letter_or_digit(correct):
+            return (
+                f"Contrast drill '{selected}' vs '{correct}': watch the clip for '{correct}', then freeze the final handshape for 2 seconds and trace '{correct}' in the air 5 times. "
+                f"Do a 5-3-1 recall set: 5 reps now, 3 reps after 10 minutes, 1 rep after 24 hours."
+            )
+
+        return (
+            f"Memory anchor for '{correct}': say the word aloud while performing the sign 6 times, then do 3 contrast reps where you alternate '{selected}' and '{correct}' to feel the difference. "
+            f"Finish with delayed recall: perform '{correct}' once after 10 minutes and once before sleep."
+        )
+
+    tips = []
+    for item in incorrect_items:
+        correct = item.get('correct_answer', 'the correct sign')
+        selected = item.get('selected', 'your answer')
+        tips.append(
+            {
+                'question_id': item.get('question_id', ''),
+                'correct_answer': correct,
+                'selected': selected,
+                'suggestion': _tailored_tip(correct, selected),
+            }
+        )
+    return tips
+
+
+def _gemini_memory_tips(incorrect_items, lesson_context):
+    api_key = os.getenv('GEMINI_API_KEY', '').strip()
+    if not api_key or not incorrect_items:
+        return _build_fallback_memory_tips(incorrect_items)
+
+    prompt_lines = [
+        'You are a sign-language memory coach.',
+        'Task: write concrete memorization coaching for each incorrect answer.',
+        'Hard constraints:',
+        '1) NO generic advice (no lines like "practice more" or "keep trying").',
+        '2) Each tip MUST explicitly mention both selected and correct answers.',
+        '3) Each tip MUST include: contrast drill + repetition schedule + delayed recall checkpoint.',
+        '4) Keep each tip 1-2 sentences, practical, and action-oriented.',
+        'Return strict JSON only in this schema:',
+        '{"tips":[{"question_id":"...","suggestion":"..."}]}',
+        f"Lesson context: {lesson_context}",
+    ]
+    for idx, item in enumerate(incorrect_items, start=1):
+        prompt_lines.append(
+            f"{idx}. selected='{item.get('selected')}', correct='{item.get('correct_answer')}', prompt='{item.get('prompt')}'"
+        )
+
+    payload = {
+        'contents': [
+            {
+                'parts': [
+                    {'text': '\n'.join(prompt_lines)}
+                ]
+            }
+        ],
+        'generationConfig': {
+            'temperature': 0.3,
+            'maxOutputTokens': 400,
+        },
+    }
+
+    try:
+        response = requests.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}",
+            json=payload,
+            timeout=12,
+        )
+        response.raise_for_status()
+        data = response.json()
+        text = (
+            data.get('candidates', [{}])[0]
+            .get('content', {})
+            .get('parts', [{}])[0]
+            .get('text', '')
+        )
+
+        cleaned = text.strip()
+        if cleaned.startswith('```'):
+            cleaned = cleaned.strip('`')
+            cleaned = cleaned.replace('json\n', '', 1).strip()
+
+        parsed = json.loads(cleaned)
+        raw_tips = parsed.get('tips', []) if isinstance(parsed, dict) else []
+        if not raw_tips:
+            return _build_fallback_memory_tips(incorrect_items)
+
+        fallback_tips = _build_fallback_memory_tips(incorrect_items)
+
+        def _is_generic_tip(tip_text, selected, correct):
+            text = str(tip_text or '').strip().lower()
+            if not text:
+                return True
+
+            generic_markers = [
+                'practice more',
+                'keep trying',
+                'replay that sign 5 times',
+                'say the word aloud',
+                'test yourself again after 10 minutes',
+                'good job',
+            ]
+            if any(marker in text for marker in generic_markers):
+                return True
+
+            # Must mention both the mistaken and correct answer for contrast coaching.
+            selected_s = str(selected or '').strip().lower()
+            correct_s = str(correct or '').strip().lower()
+            if selected_s and selected_s not in text:
+                return True
+            if correct_s and correct_s not in text:
+                return True
+
+            # Must include concrete memory structure cues.
+            required_cues = ['contrast', 'recall']
+            if not any(cue in text for cue in required_cues):
+                return True
+
+            return False
+
+        tips = []
+        for idx, item in enumerate(incorrect_items):
+            if idx < len(raw_tips):
+                tip_line = str(raw_tips[idx].get('suggestion', '')).strip()
+            else:
+                tip_line = ''
+
+            selected = item.get('selected', '')
+            correct = item.get('correct_answer', '')
+
+            if _is_generic_tip(tip_line, selected, correct):
+                tip_line = fallback_tips[idx]['suggestion']
+
+            tips.append(
+                {
+                    'question_id': item.get('question_id', ''),
+                    'correct_answer': correct,
+                    'selected': selected,
+                    'suggestion': tip_line,
+                }
+            )
+        return tips
+    except Exception:
+        return _build_fallback_memory_tips(incorrect_items)
+
+
+def _asset_for_word(word):
+    stem = _resolve_token_to_asset(str(word).strip().lower())
+    if not stem:
+        stem = str(word).strip()
+    return f"static/assets/{stem}.mp4"
+
+
+def _augment_quiz_questions(lesson, quiz):
+    if not lesson:
+        return quiz or {'questions': []}
+
+    quiz_payload = dict(quiz or {'lesson_id': lesson.get('lesson_id'), 'questions': []})
+    existing_questions = list(quiz_payload.get('questions', []))
+    target_words = list(lesson.get('target_words', []))
+
+    covered_correct = {q.get('correct') for q in existing_questions}
+    missing_words = [w for w in target_words if w not in covered_correct]
+
+    if not missing_words:
+        quiz_payload['questions'] = existing_questions
+        return quiz_payload
+
+    options_pool = [str(w) for w in target_words]
+    next_index = len(existing_questions) + 1
+    lesson_id = lesson.get('lesson_id', 'lesson')
+
+    for word in missing_words:
+        distractors = [opt for opt in options_pool if opt != word][:3]
+        options = distractors + [word]
+
+        if len(options) < 4:
+            filler = ['Hello', 'Good', 'Study', 'Help']
+            for item in filler:
+                if item not in options:
+                    options.append(item)
+                if len(options) == 4:
+                    break
+
+        # Keep order deterministic but avoid always placing correct answer last.
+        rotate = (next_index - 1) % len(options)
+        options = options[rotate:] + options[:rotate]
+
+        existing_questions.append(
+            {
+                'question_id': f"{lesson_id}_q{next_index:02d}",
+                'type': 'identify_sign_from_video',
+                'prompt': 'Watch the sign and choose the correct word.',
+                'asset': _asset_for_word(word),
+                'options': options[:4],
+                'correct': word,
+                'xp_on_correct': 10,
+            }
+        )
+        next_index += 1
+
+    quiz_payload['questions'] = existing_questions
+    return quiz_payload
+
+
+def _lesson_payload(lesson_id):
+    lessons = _read_json_file(LEARNING_LESSONS_FILE, [])
+    quizzes = _read_json_file(LEARNING_QUIZ_FILE, [])
+    lesson = next((l for l in lessons if l.get('lesson_id') == lesson_id), None)
+    quiz = next((q for q in quizzes if q.get('lesson_id') == lesson_id), None)
+    return lesson, _augment_quiz_questions(lesson, quiz)
+
+
+_ensure_learning_indexes_and_seed_data()
+
+
 # Routes
 @app.route('/')
 def home():
@@ -248,6 +575,332 @@ def index():
         return render_template('index.html', username=session['username'])
     flash('Please log in first', 'danger')
     return redirect(url_for('login'))
+
+
+@app.route('/learning')
+def learning():
+    return render_template('learning.html', username=session.get('username'))
+
+
+@app.get('/api/v1/learning/state')
+def learning_state():
+    progress = _get_learning_progress(_learning_user_key())
+    return jsonify(progress)
+
+
+@app.get('/api/v1/quests/today')
+def quests_today():
+    quests = list(
+        db.learning_quests.find({'window': 'daily', 'active': True}, {'_id': 0}).sort('quest_id', 1)
+    )
+    return jsonify({'quests': quests})
+
+
+@app.get('/api/v1/learning/path')
+def learning_path():
+    level_data = _read_json_file(LEARNING_LEVELS_FILE, {'levels': []})
+    lesson_data = _read_json_file(LEARNING_LESSONS_FILE, [])
+    progress = _get_learning_progress(_learning_user_key())
+    completed = set(progress.get('completed_lessons', []))
+
+    lesson_by_sublevel = {}
+    for lesson in lesson_data:
+        lesson_by_sublevel.setdefault(lesson.get('sublevel', ''), []).append(lesson)
+
+    for sublevel_name in lesson_by_sublevel:
+        lesson_by_sublevel[sublevel_name].sort(key=lambda x: x.get('lesson_id', ''))
+
+    path_levels = []
+    unlocked_next = True
+    for level in level_data.get('levels', []):
+        level_payload = {'name': level.get('name', ''), 'sublevels': []}
+        for sub in level.get('sublevels', []):
+            sub_name = sub.get('name', '')
+            lessons = lesson_by_sublevel.get(sub_name, [])
+            lesson_nodes = []
+            for idx, lesson in enumerate(lessons):
+                lesson_id = lesson.get('lesson_id', '')
+                is_completed = lesson_id in completed
+                is_unlocked = unlocked_next or is_completed or (idx == 0 and not completed)
+                lesson_nodes.append(
+                    {
+                        'lesson_id': lesson_id,
+                        'label': f"Lesson {idx + 1}",
+                        'goal': lesson.get('lesson_goal', ''),
+                        'word_count': len(lesson.get('target_words', [])),
+                        'completed': is_completed,
+                        'unlocked': bool(is_unlocked),
+                        'target_words': lesson.get('target_words', []),
+                    }
+                )
+                if is_completed:
+                    unlocked_next = True
+                elif is_unlocked:
+                    unlocked_next = False
+            level_payload['sublevels'].append({'name': sub_name, 'lessons': lesson_nodes})
+        path_levels.append(level_payload)
+
+    return jsonify({'levels': path_levels})
+
+
+@app.get('/api/v1/learning/lesson/<lesson_id>')
+def learning_lesson_detail(lesson_id):
+    lesson, quiz = _lesson_payload(lesson_id)
+    if not lesson:
+        return jsonify({'error': 'Lesson not found'}), 404
+    return jsonify({'lesson': lesson, 'quiz': quiz or {'questions': []}})
+
+
+@app.post('/api/v1/learning/session/start')
+def learning_session_start():
+    payload = request.get_json(silent=True) or {}
+    lesson_id = payload.get('lesson_id', '').strip()
+    sublevel = payload.get('sublevel', '').strip()
+
+    if not lesson_id:
+        return jsonify({'error': 'lesson_id is required'}), 400
+
+    lesson, quiz = _lesson_payload(lesson_id)
+    if not lesson or not quiz:
+        return jsonify({'error': 'Lesson quiz not found'}), 404
+
+    user_key = _learning_user_key()
+    attempt_number = (
+        db.learning_sessions.count_documents({'user_key': user_key, 'lesson_id': lesson_id}) + 1
+    )
+    session_id = uuid.uuid4().hex
+    quiz_questions = quiz.get('questions', [])
+
+    db.learning_sessions.insert_one(
+        {
+            'session_id': session_id,
+            'user_key': user_key,
+            'lesson_id': lesson_id,
+            'sublevel': sublevel or lesson.get('sublevel', ''),
+            'level': lesson.get('level', ''),
+            'attempt_number': attempt_number,
+            'status': 'in_progress',
+            'started_at': _utc_now(),
+            'question_count': len(quiz_questions),
+            'correct_answers': 0,
+            'wrong_answers': 0,
+            'points_scored': 0,
+            'xp_scored': 0,
+            'coins_scored': 0,
+            'answers': [],
+            'quiz_snapshot': quiz_questions,
+        }
+    )
+
+    return jsonify(
+        {
+            'session_id': session_id,
+            'status': 'started',
+            'attempt_number': attempt_number,
+            'question_count': len(quiz_questions),
+            'started_at': _utc_now().isoformat(),
+        }
+    )
+
+
+@app.post('/api/v1/learning/answer')
+def learning_answer_submit():
+    payload = request.get_json(silent=True) or {}
+    session_id = payload.get('session_id', '').strip()
+    question_id = payload.get('question_id', '').strip()
+    selected = payload.get('selected')
+
+    if not session_id or not question_id:
+        return jsonify({'error': 'session_id and question_id are required'}), 400
+
+    session_doc = db.learning_sessions.find_one({'session_id': session_id})
+    if not session_doc:
+        return jsonify({'error': 'Session not found'}), 404
+
+    questions = session_doc.get('quiz_snapshot', [])
+    question = next((q for q in questions if q.get('question_id') == question_id), None)
+    if not question:
+        return jsonify({'error': 'Question not found for session'}), 404
+
+    correct_answer = question.get('correct')
+    is_correct = selected == correct_answer
+    xp_delta = int(question.get('xp_on_correct', 10)) if is_correct else 0
+    points_delta = xp_delta
+    coins_delta = 3 if is_correct else 0
+
+    attempt_index = (
+        db.learning_answer_attempts.count_documents({'session_id': session_id, 'question_id': question_id}) + 1
+    )
+    now = _utc_now()
+
+    db.learning_answer_attempts.insert_one(
+        {
+            'session_id': session_id,
+            'user_key': session_doc.get('user_key'),
+            'lesson_id': session_doc.get('lesson_id'),
+            'question_id': question_id,
+            'prompt': question.get('prompt', ''),
+            'selected': selected,
+            'correct_answer': correct_answer,
+            'is_correct': bool(is_correct),
+            'attempt_index': attempt_index,
+            'created_at': now,
+        }
+    )
+
+    db.learning_sessions.update_one(
+        {'session_id': session_id},
+        {
+            '$inc': {
+                'correct_answers': 1 if is_correct else 0,
+                'wrong_answers': 0 if is_correct else 1,
+                'points_scored': points_delta,
+                'xp_scored': xp_delta,
+                'coins_scored': coins_delta,
+            },
+            '$push': {
+                'answers': {
+                    'question_id': question_id,
+                    'prompt': question.get('prompt', ''),
+                    'selected': selected,
+                    'correct_answer': correct_answer,
+                    'is_correct': bool(is_correct),
+                    'attempt_index': attempt_index,
+                    'answered_at': now,
+                }
+            },
+            '$set': {'last_answered_at': now},
+        },
+    )
+
+    return jsonify(
+        {
+            'correct': bool(is_correct),
+            'correct_answer': correct_answer,
+            'xp_delta': xp_delta,
+            'points_delta': points_delta,
+            'coins_delta': coins_delta,
+        }
+    )
+
+
+@app.post('/api/v1/learning/complete')
+def learning_complete():
+    payload = request.get_json(silent=True) or {}
+    session_id = payload.get('session_id', '').strip()
+
+    session_doc = None
+    if session_id:
+        session_doc = db.learning_sessions.find_one({'session_id': session_id})
+
+    if not session_doc:
+        return jsonify({'error': 'session_id is required and must be valid'}), 400
+
+    lesson_id = session_doc.get('lesson_id', '')
+    total_questions = max(int(session_doc.get('question_count', 0)), 1)
+    correct_answers = int(session_doc.get('correct_answers', 0))
+    wrong_answers = int(session_doc.get('wrong_answers', 0))
+    score_percent = int(round((correct_answers / total_questions) * 100))
+
+    points_scored = int(session_doc.get('points_scored', 0))
+    xp_scored = int(session_doc.get('xp_scored', 0))
+    coins_scored = int(session_doc.get('coins_scored', 0))
+
+    xp_bonus = 25 if score_percent == 100 else (10 if score_percent >= 80 else 0)
+    coins_bonus = 10 if score_percent >= 80 else 0
+    gems_awarded = 1 if score_percent >= 90 else 0
+
+    xp_awarded = xp_scored + xp_bonus
+    coins_awarded = coins_scored + coins_bonus
+    hearts_delta = 0 if score_percent >= 80 else -1
+
+    incorrect_items = [a for a in session_doc.get('answers', []) if not a.get('is_correct')]
+    lesson_context = f"Lesson {lesson_id}, score {score_percent}%"
+    suggestions = _gemini_memory_tips(incorrect_items, lesson_context)
+
+    user_key = session_doc.get('user_key') or _learning_user_key()
+    progress = _get_learning_progress(user_key)
+    next_streak = _compute_next_streak(
+        progress.get('streak_days', 0),
+        progress.get('last_activity_day')
+    )
+
+    completed_lessons = list(progress.get('completed_lessons', []))
+    if lesson_id and lesson_id not in completed_lessons:
+        completed_lessons.append(lesson_id)
+
+    updated_progress = dict(progress)
+    updated_progress.update(
+        {
+            'xp': int(progress.get('xp', 0)) + xp_awarded,
+            'coins': int(progress.get('coins', 0)) + coins_awarded,
+            'gems': int(progress.get('gems', 0)) + gems_awarded,
+            'hearts': max(0, min(5, int(progress.get('hearts', 5)) + hearts_delta)),
+            'streak_days': next_streak,
+            'completed_lessons': completed_lessons,
+            'total_lesson_attempts': int(progress.get('total_lesson_attempts', 0)) + 1,
+            'total_questions_answered': int(progress.get('total_questions_answered', 0)) + total_questions,
+            'total_correct_answers': int(progress.get('total_correct_answers', 0)) + correct_answers,
+            'total_xp_earned': int(progress.get('total_xp_earned', 0)) + xp_awarded,
+            'last_activity_day': time.strftime('%Y-%m-%d'),
+        }
+    )
+    _save_learning_progress(user_key, updated_progress)
+
+    now = _utc_now()
+    db.learning_sessions.update_one(
+        {'session_id': session_id},
+        {
+            '$set': {
+                'status': 'completed',
+                'completed_at': now,
+                'score_percent': score_percent,
+                'xp_awarded': xp_awarded,
+                'coins_awarded': coins_awarded,
+                'gems_awarded': gems_awarded,
+                'suggestions': suggestions,
+            }
+        },
+    )
+
+    db.learning_lesson_reports.insert_one(
+        {
+            'session_id': session_id,
+            'user_key': user_key,
+            'lesson_id': lesson_id,
+            'attempt_number': int(session_doc.get('attempt_number', 1)),
+            'score_percent': score_percent,
+            'correct_answers': correct_answers,
+            'wrong_answers': wrong_answers,
+            'total_questions': total_questions,
+            'points_scored': points_scored,
+            'xp_scored': xp_scored,
+            'xp_awarded': xp_awarded,
+            'coins_awarded': coins_awarded,
+            'gems_awarded': gems_awarded,
+            'incorrect_suggestions': suggestions,
+            'completed_at': now,
+        }
+    )
+
+    return jsonify(
+        {
+            'state': updated_progress,
+            'stats': {
+                'correct_answers': correct_answers,
+                'wrong_answers': wrong_answers,
+                'total_questions': total_questions,
+                'score_percent': score_percent,
+                'points_scored': points_scored,
+                'xp_scored': xp_scored,
+                'xp_awarded': xp_awarded,
+                'coins_awarded': coins_awarded,
+                'gems_awarded': gems_awarded,
+            },
+            'memory_suggestions': suggestions,
+            'session_id': session_id,
+        }
+    )
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -826,4 +1479,7 @@ def video_feed():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    host = os.getenv('FLASK_HOST', '127.0.0.1')
+    port = int(os.getenv('FLASK_PORT', '5000'))
+    debug = os.getenv('FLASK_DEBUG', 'true').lower() in {'1', 'true', 'yes', 'on'}
+    app.run(host=host, port=port, debug=debug)

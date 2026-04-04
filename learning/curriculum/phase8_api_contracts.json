@@ -1,0 +1,46 @@
+{
+  "phase": "Phase 8 API Contracts",
+  "base_path": "/api/v1",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/personalization/next-lesson",
+      "query": {
+        "user_id": "u123"
+      },
+      "response": {
+        "recommended_lesson_id": "b1_foundations_lesson_02",
+        "reason": "weak_words_overlap + streak_preservation"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/personalization/revision-queue",
+      "query": {
+        "user_id": "u123"
+      },
+      "response": {
+        "words": [
+          "Hello",
+          "Where",
+          "Thank"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/retention/weekly-summary",
+      "query": {
+        "user_id": "u123"
+      },
+      "response": {
+        "lessons_completed": 14,
+        "accuracy_percent": 82,
+        "xp_gained": 620,
+        "new_badges": [
+          "week_warrior"
+        ]
+      }
+    }
+  ]
+}

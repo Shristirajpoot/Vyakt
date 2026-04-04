@@ -1,0 +1,908 @@
+{
+  "a": {
+    "word": "A",
+    "asset": "static/assets/A.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "b": {
+    "word": "B",
+    "asset": "static/assets/B.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "bye": {
+    "word": "Bye",
+    "asset": "static/assets/Bye.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "c": {
+    "word": "C",
+    "asset": "static/assets/C.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "d": {
+    "word": "D",
+    "asset": "static/assets/D.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "day": {
+    "word": "Day",
+    "asset": "static/assets/Day.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "e": {
+    "word": "E",
+    "asset": "static/assets/E.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "f": {
+    "word": "F",
+    "asset": "static/assets/F.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "g": {
+    "word": "G",
+    "asset": "static/assets/G.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "good": {
+    "word": "Good",
+    "asset": "static/assets/Good.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "h": {
+    "word": "H",
+    "asset": "static/assets/H.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "happy": {
+    "word": "Happy",
+    "asset": "static/assets/Happy.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "hello": {
+    "word": "Hello",
+    "asset": "static/assets/Hello.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "help": {
+    "word": "Help",
+    "asset": "static/assets/Help.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "home": {
+    "word": "Home",
+    "asset": "static/assets/Home.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "how": {
+    "word": "How",
+    "asset": "static/assets/How.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "i": {
+    "word": "I",
+    "asset": "static/assets/I.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "j": {
+    "word": "J",
+    "asset": "static/assets/J.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "k": {
+    "word": "K",
+    "asset": "static/assets/K.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "l": {
+    "word": "L",
+    "asset": "static/assets/L.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "learn": {
+    "word": "Learn",
+    "asset": "static/assets/Learn.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "m": {
+    "word": "M",
+    "asset": "static/assets/M.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "my": {
+    "word": "My",
+    "asset": "static/assets/My.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "n": {
+    "word": "N",
+    "asset": "static/assets/N.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "name": {
+    "word": "Name",
+    "asset": "static/assets/Name.mp4",
+    "level": "beginner",
+    "sublevel": "B1 Foundations"
+  },
+  "o": {
+    "word": "O",
+    "asset": "static/assets/O.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "p": {
+    "word": "P",
+    "asset": "static/assets/P.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "q": {
+    "word": "Q",
+    "asset": "static/assets/Q.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "r": {
+    "word": "R",
+    "asset": "static/assets/R.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "s": {
+    "word": "S",
+    "asset": "static/assets/S.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "sad": {
+    "word": "Sad",
+    "asset": "static/assets/Sad.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "safe": {
+    "word": "Safe",
+    "asset": "static/assets/Safe.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "study": {
+    "word": "Study",
+    "asset": "static/assets/Study.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "t": {
+    "word": "T",
+    "asset": "static/assets/T.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "thank": {
+    "word": "Thank",
+    "asset": "static/assets/Thank.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "time": {
+    "word": "Time",
+    "asset": "static/assets/Time.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "u": {
+    "word": "U",
+    "asset": "static/assets/U.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "v": {
+    "word": "V",
+    "asset": "static/assets/V.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "w": {
+    "word": "W",
+    "asset": "static/assets/W.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "we": {
+    "word": "We",
+    "asset": "static/assets/We.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "welcome": {
+    "word": "Welcome",
+    "asset": "static/assets/Welcome.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "what": {
+    "word": "What",
+    "asset": "static/assets/What.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "when": {
+    "word": "When",
+    "asset": "static/assets/When.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "where": {
+    "word": "Where",
+    "asset": "static/assets/Where.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "who": {
+    "word": "Who",
+    "asset": "static/assets/Who.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "why": {
+    "word": "Why",
+    "asset": "static/assets/Why.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "work": {
+    "word": "Work",
+    "asset": "static/assets/Work.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "x": {
+    "word": "X",
+    "asset": "static/assets/X.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "y": {
+    "word": "Y",
+    "asset": "static/assets/Y.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "you": {
+    "word": "You",
+    "asset": "static/assets/You.mp4",
+    "level": "beginner",
+    "sublevel": "B2 Daily Core"
+  },
+  "0": {
+    "word": "0",
+    "asset": "static/assets/0.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "1": {
+    "word": "1",
+    "asset": "static/assets/1.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "2": {
+    "word": "2",
+    "asset": "static/assets/2.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "3": {
+    "word": "3",
+    "asset": "static/assets/3.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "4": {
+    "word": "4",
+    "asset": "static/assets/4.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "5": {
+    "word": "5",
+    "asset": "static/assets/5.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "6": {
+    "word": "6",
+    "asset": "static/assets/6.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "7": {
+    "word": "7",
+    "asset": "static/assets/7.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "8": {
+    "word": "8",
+    "asset": "static/assets/8.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "9": {
+    "word": "9",
+    "asset": "static/assets/9.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "age": {
+    "word": "Age",
+    "asset": "static/assets/Age.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "all": {
+    "word": "All",
+    "asset": "static/assets/All.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "also": {
+    "word": "Also",
+    "asset": "static/assets/Also.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "and": {
+    "word": "And",
+    "asset": "static/assets/And.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "ask": {
+    "word": "Ask",
+    "asset": "static/assets/Ask.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "at": {
+    "word": "At",
+    "asset": "static/assets/At.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "be": {
+    "word": "Be",
+    "asset": "static/assets/Be.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "busy": {
+    "word": "Busy",
+    "asset": "static/assets/Busy.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "but": {
+    "word": "But",
+    "asset": "static/assets/But.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "can": {
+    "word": "Can",
+    "asset": "static/assets/Can.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "come": {
+    "word": "Come",
+    "asset": "static/assets/Come.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "do": {
+    "word": "Do",
+    "asset": "static/assets/Do.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "fight": {
+    "word": "Fight",
+    "asset": "static/assets/Fight.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "your": {
+    "word": "Your",
+    "asset": "static/assets/Your.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "z": {
+    "word": "Z",
+    "asset": "static/assets/Z.mp4",
+    "level": "beginner",
+    "sublevel": "B3 Starter Phrases"
+  },
+  "finish": {
+    "word": "Finish",
+    "asset": "static/assets/Finish.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "go": {
+    "word": "Go",
+    "asset": "static/assets/Go.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "god": {
+    "word": "God",
+    "asset": "static/assets/God.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "gold": {
+    "word": "Gold",
+    "asset": "static/assets/Gold.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "great": {
+    "word": "Great",
+    "asset": "static/assets/Great.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "hand": {
+    "word": "Hand",
+    "asset": "static/assets/Hand.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "hands": {
+    "word": "Hands",
+    "asset": "static/assets/Hands.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "her": {
+    "word": "Her",
+    "asset": "static/assets/Her.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "here": {
+    "word": "Here",
+    "asset": "static/assets/Here.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "his": {
+    "word": "His",
+    "asset": "static/assets/His.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "it": {
+    "word": "It",
+    "asset": "static/assets/It.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "laugh": {
+    "word": "Laugh",
+    "asset": "static/assets/Laugh.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "me": {
+    "word": "ME",
+    "asset": "static/assets/ME.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "not": {
+    "word": "Not",
+    "asset": "static/assets/Not.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "now": {
+    "word": "Now",
+    "asset": "static/assets/Now.mp4",
+    "level": "intermediate",
+    "sublevel": "I1 Actions"
+  },
+  "of": {
+    "word": "Of",
+    "asset": "static/assets/Of.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "on": {
+    "word": "On",
+    "asset": "static/assets/On.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "our": {
+    "word": "Our",
+    "asset": "static/assets/Our.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "out": {
+    "word": "Out",
+    "asset": "static/assets/Out.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "pretty": {
+    "word": "Pretty",
+    "asset": "static/assets/Pretty.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "see": {
+    "word": "See",
+    "asset": "static/assets/See.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "self": {
+    "word": "Self",
+    "asset": "static/assets/Self.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "sign": {
+    "word": "Sign",
+    "asset": "static/assets/Sign.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "sing": {
+    "word": "Sing",
+    "asset": "static/assets/Sing.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "so": {
+    "word": "So",
+    "asset": "static/assets/So.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "stay": {
+    "word": "Stay",
+    "asset": "static/assets/Stay.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "thank_you": {
+    "word": "Thank You",
+    "asset": "static/assets/Thank You.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "that": {
+    "word": "That",
+    "asset": "static/assets/That.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "they": {
+    "word": "They",
+    "asset": "static/assets/They.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "this": {
+    "word": "This",
+    "asset": "static/assets/This.mp4",
+    "level": "intermediate",
+    "sublevel": "I2 Concepts"
+  },
+  "after": {
+    "word": "After",
+    "asset": "static/assets/After.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "again": {
+    "word": "Again",
+    "asset": "static/assets/Again.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "before": {
+    "word": "Before",
+    "asset": "static/assets/Before.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "best": {
+    "word": "Best",
+    "asset": "static/assets/Best.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "better": {
+    "word": "Better",
+    "asset": "static/assets/Better.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "change": {
+    "word": "Change",
+    "asset": "static/assets/Change.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "computer": {
+    "word": "Computer",
+    "asset": "static/assets/Computer.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "those": {
+    "word": "Those",
+    "asset": "static/assets/Those.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "to": {
+    "word": "To",
+    "asset": "static/assets/To.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "type": {
+    "word": "Type",
+    "asset": "static/assets/Type.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "us": {
+    "word": "Us",
+    "asset": "static/assets/Us.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "way": {
+    "word": "Way",
+    "asset": "static/assets/Way.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "which": {
+    "word": "Which",
+    "asset": "static/assets/Which.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "will": {
+    "word": "Will",
+    "asset": "static/assets/Will.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "words": {
+    "word": "Words",
+    "asset": "static/assets/Words.mp4",
+    "level": "intermediate",
+    "sublevel": "I3 Sentences"
+  },
+  "distance": {
+    "word": "Distance",
+    "asset": "static/assets/Distance.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "eat": {
+    "word": "Eat",
+    "asset": "static/assets/Eat.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "engineer": {
+    "word": "Engineer",
+    "asset": "static/assets/Engineer.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "from": {
+    "word": "From",
+    "asset": "static/assets/From.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "keep": {
+    "word": "Keep",
+    "asset": "static/assets/Keep.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "language": {
+    "word": "Language",
+    "asset": "static/assets/Language.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "more": {
+    "word": "More",
+    "asset": "static/assets/More.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "next": {
+    "word": "Next",
+    "asset": "static/assets/Next.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "right": {
+    "word": "Right",
+    "asset": "static/assets/Right.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "sound": {
+    "word": "Sound",
+    "asset": "static/assets/Sound.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "talk": {
+    "word": "Talk",
+    "asset": "static/assets/Talk.mp4",
+    "level": "advanced",
+    "sublevel": "A1 Complex Meaning"
+  },
+  "against": {
+    "word": "Against",
+    "asset": "static/assets/Against.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "alone": {
+    "word": "Alone",
+    "asset": "static/assets/Alone.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "beautiful": {
+    "word": "Beautiful",
+    "asset": "static/assets/Beautiful.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "television": {
+    "word": "Television",
+    "asset": "static/assets/Television.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "walk": {
+    "word": "Walk",
+    "asset": "static/assets/Walk.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "wash": {
+    "word": "Wash",
+    "asset": "static/assets/Wash.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "whole": {
+    "word": "Whole",
+    "asset": "static/assets/Whole.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "with": {
+    "word": "With",
+    "asset": "static/assets/With.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "without": {
+    "word": "Without",
+    "asset": "static/assets/Without.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "world": {
+    "word": "World",
+    "asset": "static/assets/World.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "wrong": {
+    "word": "Wrong",
+    "asset": "static/assets/Wrong.mp4",
+    "level": "advanced",
+    "sublevel": "A2 Scenario Language"
+  },
+  "cannot": {
+    "word": "Cannot",
+    "asset": "static/assets/Cannot.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "college": {
+    "word": "College",
+    "asset": "static/assets/College.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "do_not": {
+    "word": "Do Not",
+    "asset": "static/assets/Do Not.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "does_not": {
+    "word": "Does Not",
+    "asset": "static/assets/Does Not.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "glitter": {
+    "word": "Glitter",
+    "asset": "static/assets/Glitter.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "homepage": {
+    "word": "Homepage",
+    "asset": "static/assets/Homepage.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "invent": {
+    "word": "Invent",
+    "asset": "static/assets/Invent.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "whose": {
+    "word": "Whose",
+    "asset": "static/assets/Whose.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  },
+  "yourself": {
+    "word": "Yourself",
+    "asset": "static/assets/Yourself.mp4",
+    "level": "advanced",
+    "sublevel": "A3 Fluency Sprint"
+  }
+}

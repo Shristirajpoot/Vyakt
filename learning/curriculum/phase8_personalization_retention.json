@@ -1,0 +1,160 @@
+{
+  "phase": "Phase 8 - Personalization and Retention",
+  "database": "mongodb",
+  "personalization_rules": {
+    "weak_skill_threshold": 0.65,
+    "repeat_missed_words_weight": 0.55,
+    "recent_mistakes_boost": 0.3,
+    "streak_preservation_boost": 0.15,
+    "next_lesson_strategy": "prefer current sublevel; if mastery >= 85% then unlock next"
+  },
+  "retention_loops": {
+    "daily_nudge": {
+      "trigger_hours": [
+        10,
+        18
+      ],
+      "copy_template": "You are {streak_days} day streak away from your next badge."
+    },
+    "weekly_summary": {
+      "send_day": "Sunday",
+      "fields": [
+        "lessons_completed",
+        "accuracy_percent",
+        "new_badges",
+        "xp_gained",
+        "top_3_improved_words"
+      ]
+    },
+    "recovery_flow": {
+      "trigger": "streak_missed_with_no_freeze",
+      "offer": "complete one recovery lesson within 24h to restore streak"
+    }
+  },
+  "adaptive_content": {
+    "levels": 3,
+    "lessons": {
+      "b1_foundations_lesson_01": {
+        "level": "beginner",
+        "sublevel": "B1 Foundations",
+        "question_count": 6
+      },
+      "b1_foundations_lesson_02": {
+        "level": "beginner",
+        "sublevel": "B1 Foundations",
+        "question_count": 6
+      },
+      "b1_foundations_lesson_03": {
+        "level": "beginner",
+        "sublevel": "B1 Foundations",
+        "question_count": 6
+      },
+      "b1_foundations_lesson_04": {
+        "level": "beginner",
+        "sublevel": "B1 Foundations",
+        "question_count": 1
+      },
+      "b2_daily_core_lesson_01": {
+        "level": "beginner",
+        "sublevel": "B2 Daily Core",
+        "question_count": 6
+      },
+      "b2_daily_core_lesson_02": {
+        "level": "beginner",
+        "sublevel": "B2 Daily Core",
+        "question_count": 6
+      },
+      "b2_daily_core_lesson_03": {
+        "level": "beginner",
+        "sublevel": "B2 Daily Core",
+        "question_count": 6
+      },
+      "b2_daily_core_lesson_04": {
+        "level": "beginner",
+        "sublevel": "B2 Daily Core",
+        "question_count": 1
+      },
+      "b3_starter_phrases_lesson_01": {
+        "level": "beginner",
+        "sublevel": "B3 Starter Phrases",
+        "question_count": 6
+      },
+      "b3_starter_phrases_lesson_02": {
+        "level": "beginner",
+        "sublevel": "B3 Starter Phrases",
+        "question_count": 6
+      },
+      "b3_starter_phrases_lesson_03": {
+        "level": "beginner",
+        "sublevel": "B3 Starter Phrases",
+        "question_count": 6
+      },
+      "b3_starter_phrases_lesson_04": {
+        "level": "beginner",
+        "sublevel": "B3 Starter Phrases",
+        "question_count": 1
+      },
+      "i1_actions_lesson_01": {
+        "level": "intermediate",
+        "sublevel": "I1 Actions",
+        "question_count": 6
+      },
+      "i1_actions_lesson_02": {
+        "level": "intermediate",
+        "sublevel": "I1 Actions",
+        "question_count": 6
+      },
+      "i2_concepts_lesson_01": {
+        "level": "intermediate",
+        "sublevel": "I2 Concepts",
+        "question_count": 6
+      },
+      "i2_concepts_lesson_02": {
+        "level": "intermediate",
+        "sublevel": "I2 Concepts",
+        "question_count": 6
+      },
+      "i3_sentences_lesson_01": {
+        "level": "intermediate",
+        "sublevel": "I3 Sentences",
+        "question_count": 6
+      },
+      "i3_sentences_lesson_02": {
+        "level": "intermediate",
+        "sublevel": "I3 Sentences",
+        "question_count": 6
+      },
+      "a1_complex_meaning_lesson_01": {
+        "level": "advanced",
+        "sublevel": "A1 Complex Meaning",
+        "question_count": 6
+      },
+      "a1_complex_meaning_lesson_02": {
+        "level": "advanced",
+        "sublevel": "A1 Complex Meaning",
+        "question_count": 3
+      },
+      "a2_scenario_language_lesson_01": {
+        "level": "advanced",
+        "sublevel": "A2 Scenario Language",
+        "question_count": 6
+      },
+      "a2_scenario_language_lesson_02": {
+        "level": "advanced",
+        "sublevel": "A2 Scenario Language",
+        "question_count": 3
+      },
+      "a3_fluency_sprint_lesson_01": {
+        "level": "advanced",
+        "sublevel": "A3 Fluency Sprint",
+        "question_count": 6
+      },
+      "a3_fluency_sprint_lesson_02": {
+        "level": "advanced",
+        "sublevel": "A3 Fluency Sprint",
+        "question_count": 1
+      }
+    },
+    "revision_queue_policy": "last 20 incorrect answers prioritized by recency and frequency"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "phase": "Phase 10 - Hackathon Polish and Launch",
+  "launch_readiness": {
+    "accessibility": [
+      "keyboard_navigable_lessons",
+      "visible_focus_states",
+      "captions_for_all_videos",
+      "reduced_motion_mode",
+      "contrast_ratio_aa_or_better"
+    ],
+    "performance": [
+      "home_load_under_2s",
+      "lesson_transition_under_300ms",
+      "quiz_submit_under_200ms"
+    ],
+    "reliability": [
+      "graceful_fallback_if_asset_missing",
+      "idempotent_lesson_finish",
+      "retry_on_temporary_db_failures"
+    ],
+    "security": [
+      "input_validation_on_all_api_routes",
+      "role_checks_for_admin_actions",
+      "pii_safe_logging_enabled"
+    ]
+  },
+  "judge_demo_pack": {
+    "demo_duration_minutes": 5,
+    "must_show": [
+      "lesson completion with XP gain",
+      "badge unlock animation",
+      "streak increment",
+      "personalized next lesson",
+      "leaderboard update"
+    ],
+    "backup_flows": [
+      "offline dataset-only mode",
+      "pre-seeded demo account"
+    ]
+  },
+  "pitch_variants": {
+    "30_sec": "We built a gamified sign-language learning platform with adaptive progression, streak-based retention, and policy-ready auditability.",
+    "2_min": "The platform converts your curated sign dataset into progressive lessons and quizzes. Learners earn XP, maintain streaks, unlock badges, and receive personalized recommendations. MongoDB powers event-driven progress tracking and leaderboard analytics."
+  },
+  "ui_polish_targets": {
+    "screen_count": 5,
+    "motion": {
+      "micro_interactions": [
+        "lesson_card_flip_220ms",
+        "xp_counter_pop_300ms",
+        "badge_unlock_sparkle_900ms"
+      ],
+      "reduced_motion_support": true
+    },
+    "mobile_first": true
+  }
+}

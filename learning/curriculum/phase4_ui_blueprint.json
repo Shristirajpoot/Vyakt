@@ -1,0 +1,108 @@
+{
+  "phase": "Phase 4 - UI and UX Blueprint",
+  "ui_direction": "playful_learning_path_inspired",
+  "database": "mongodb",
+  "screen_map": [
+    {
+      "id": "home_path",
+      "title": "Learning Path Home",
+      "goal": "Show progression nodes for all sublevels",
+      "widgets": [
+        "streak_chip",
+        "xp_meter",
+        "heart_meter",
+        "unit_path_nodes",
+        "daily_quests_card"
+      ],
+      "api_dependencies": [
+        "GET /api/v1/progress/home",
+        "GET /api/v1/quests/today"
+      ]
+    },
+    {
+      "id": "lesson_player",
+      "title": "Lesson Player",
+      "goal": "Teach signs in bite-size cards and interactive checks",
+      "widgets": [
+        "sign_video_panel",
+        "answer_options",
+        "confidence_feedback",
+        "hearts_status",
+        "continue_button"
+      ],
+      "api_dependencies": [
+        "POST /api/v1/lesson/start",
+        "POST /api/v1/lesson/answer",
+        "POST /api/v1/lesson/finish"
+      ]
+    },
+    {
+      "id": "reward_modal",
+      "title": "Reward and Celebration",
+      "goal": "Celebrate XP gain, badge unlock, and streak progress",
+      "widgets": [
+        "xp_counter_animation",
+        "badge_unlock_tile",
+        "streak_fire_meter"
+      ],
+      "api_dependencies": [
+        "GET /api/v1/rewards/last"
+      ]
+    },
+    {
+      "id": "profile_stats",
+      "title": "Profile and Stats",
+      "goal": "Show history, badges, and level completion",
+      "widgets": [
+        "badge_grid",
+        "accuracy_chart",
+        "lesson_history",
+        "current_league"
+      ],
+      "api_dependencies": [
+        "GET /api/v1/profile/stats",
+        "GET /api/v1/leaderboard/weekly"
+      ]
+    },
+    {
+      "id": "shop_screen",
+      "title": "Reward Shop",
+      "goal": "Spend earned gems on streak freeze and cosmetic items",
+      "widgets": [
+        "gem_balance",
+        "shop_item_cards",
+        "purchase_action"
+      ],
+      "api_dependencies": [
+        "GET /api/v1/shop/items",
+        "POST /api/v1/shop/purchase"
+      ]
+    }
+  ],
+  "layout_system": {
+    "mobile_first": true,
+    "breakpoints": {
+      "sm": 480,
+      "md": 768,
+      "lg": 1024
+    },
+    "navigation": {
+      "mobile": "bottom_tab_nav",
+      "desktop": "left_rail"
+    }
+  },
+  "motion_specs": {
+    "micro_interactions": [
+      "lesson_card_flip_220ms",
+      "xp_counter_pop_300ms",
+      "badge_unlock_sparkle_900ms"
+    ],
+    "reduced_motion_support": true
+  },
+  "content_density": {
+    "levels": 3,
+    "path_nodes": 9,
+    "recommended_cards_per_lesson": 8,
+    "recommended_quiz_questions": 6
+  }
+}

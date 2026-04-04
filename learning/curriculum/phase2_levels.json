@@ -1,0 +1,240 @@
+{
+  "phase": "Phase 2 - Level and Sub-level Design",
+  "levels": [
+    {
+      "name": "beginner",
+      "word_count": 75,
+      "unlock_rule": "Previous level completed with average score >= 75%",
+      "sublevels": [
+        {
+          "name": "B1 Foundations",
+          "word_count": 25,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "A",
+            "B",
+            "Bye",
+            "C",
+            "D",
+            "Day",
+            "E",
+            "F",
+            "G",
+            "Good",
+            "H",
+            "Happy",
+            "Hello",
+            "Help",
+            "Home",
+            "How",
+            "I",
+            "J",
+            "K",
+            "L",
+            "Learn",
+            "M",
+            "My",
+            "N",
+            "Name"
+          ]
+        },
+        {
+          "name": "B2 Daily Core",
+          "word_count": 25,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "Sad",
+            "Safe",
+            "Study",
+            "T",
+            "Thank",
+            "Time",
+            "U",
+            "V",
+            "W",
+            "We",
+            "Welcome",
+            "What",
+            "When",
+            "Where",
+            "Who",
+            "Why",
+            "Work",
+            "X",
+            "Y",
+            "You"
+          ]
+        },
+        {
+          "name": "B3 Starter Phrases",
+          "word_count": 25,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "Age",
+            "All",
+            "Also",
+            "And",
+            "Ask",
+            "At",
+            "Be",
+            "Busy",
+            "But",
+            "Can",
+            "Come",
+            "Do",
+            "Fight",
+            "Your",
+            "Z"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "intermediate",
+      "word_count": 45,
+      "unlock_rule": "Previous level completed with average score >= 75%",
+      "sublevels": [
+        {
+          "name": "I1 Actions",
+          "word_count": 15,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "Finish",
+            "Go",
+            "God",
+            "Gold",
+            "Great",
+            "Hand",
+            "Hands",
+            "Her",
+            "Here",
+            "His",
+            "It",
+            "Laugh",
+            "ME",
+            "Not",
+            "Now"
+          ]
+        },
+        {
+          "name": "I2 Concepts",
+          "word_count": 15,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "Of",
+            "On",
+            "Our",
+            "Out",
+            "Pretty",
+            "See",
+            "Self",
+            "Sign",
+            "Sing",
+            "So",
+            "Stay",
+            "Thank You",
+            "That",
+            "They",
+            "This"
+          ]
+        },
+        {
+          "name": "I3 Sentences",
+          "word_count": 15,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "After",
+            "Again",
+            "Before",
+            "Best",
+            "Better",
+            "Change",
+            "Computer",
+            "Those",
+            "To",
+            "Type",
+            "Us",
+            "Way",
+            "Which",
+            "Will",
+            "Words"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "advanced",
+      "word_count": 31,
+      "unlock_rule": "Previous level completed with average score >= 75%",
+      "sublevels": [
+        {
+          "name": "A1 Complex Meaning",
+          "word_count": 11,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "Distance",
+            "Eat",
+            "Engineer",
+            "From",
+            "Keep",
+            "Language",
+            "More",
+            "Next",
+            "Right",
+            "Sound",
+            "Talk"
+          ]
+        },
+        {
+          "name": "A2 Scenario Language",
+          "word_count": 11,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "Against",
+            "Alone",
+            "Beautiful",
+            "Television",
+            "Walk",
+            "Wash",
+            "Whole",
+            "With",
+            "Without",
+            "World",
+            "Wrong"
+          ]
+        },
+        {
+          "name": "A3 Fluency Sprint",
+          "word_count": 9,
+          "unlock_rule": "Complete >= 80% lesson score in previous sublevel",
+          "words": [
+            "Cannot",
+            "College",
+            "Do Not",
+            "Does Not",
+            "Glitter",
+            "Homepage",
+            "Invent",
+            "Whose",
+            "Yourself"
+          ]
+        }
+      ]
+    }
+  ]
+}
