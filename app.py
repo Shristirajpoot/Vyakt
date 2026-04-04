@@ -1,4 +1,4 @@
-import cv2
+﻿import cv2
 import os
 import requests
 import re
@@ -25,10 +25,16 @@ import torch
 import numpy as np
 import threading
 camera_lock = threading.Lock()
-latest_prediction = ""
+latest_prediction = {"text": "", "confidence": 0.0, "state": "idle"}
 captured_sequence = []
 is_capturing = False
-from Model.features import FEATURE_SIZE, SEQUENCE_LENGTH, extract_landmark_features, normalize_sequence
+from Model.features import (
+    FEATURE_SIZE,
+    SEQUENCE_LENGTH,
+    extract_landmark_features,
+    is_no_hand_feature_vector,
+    normalize_sequence,
+)
 from Model.gesture_model import GestureTransformer
 from pydub import AudioSegment
 from flask import session, redirect, url_for, request
@@ -374,6 +380,7 @@ def _build_fallback_memory_tips(incorrect_items):
 
 def _gemini_memory_tips(incorrect_items, lesson_context):
     api_key = os.getenv('GEMINI_API_KEY', '').strip()
+    gemini_text_model = os.getenv('GEMINI_TEXT_MODEL', 'gemini-1.5-flash').strip()
     if not api_key or not incorrect_items:
         return _build_fallback_memory_tips(incorrect_items)
 
@@ -410,7 +417,7 @@ def _gemini_memory_tips(incorrect_items, lesson_context):
 
     try:
         response = requests.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}",
+            f"https://generativelanguage.googleapis.com/v1/models/{gemini_text_model}:generateContent?key={api_key}",
             json=payload,
             timeout=12,
         )
@@ -497,6 +504,81 @@ def _asset_for_word(word):
     if not stem:
         stem = str(word).strip()
     return f"static/assets/{stem}.mp4"
+
+
+def correct_sentence_with_gemini(sentence: str) -> str:
+    clean_sentence = str(sentence or "").strip()
+    if not clean_sentence:
+        app.logger.info("Gemini correction skipped: empty sentence.")
+        return ""
+
+    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        app.logger.warning("Gemini correction skipped: GEMINI_API_KEY is not set.")
+        return clean_sentence
+
+    gemini_text_model = os.getenv("GEMINI_TEXT_MODEL", "gemini-1.5-flash").strip() or "gemini-1.5-flash"
+
+    try:
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": (
+                                "You are a grammar and fluency editor for sign-language-to-text output.\n"
+                                "Rewrite the text into one clean, natural English sentence.\n"
+                                "You may reorder words if needed, but keep the original meaning.\n"
+                                "Do not return the exact input if it is not grammatical.\n"
+                                "Return only the corrected sentence, no explanation.\n"
+                                f"Input: {clean_sentence}"
+                            )
+                        }
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.2,
+                "maxOutputTokens": 120,
+            },
+        }
+        response = requests.post(
+            f"https://generativelanguage.googleapis.com/v1/models/{gemini_text_model}:generateContent?key={api_key}",
+            json=payload,
+            timeout=12,
+        )
+        response.raise_for_status()
+        data = response.json()
+        corrected = (
+            data.get("candidates", [{}])[0]
+            .get("content", {})
+            .get("parts", [{}])[0]
+            .get("text", "")
+            .strip()
+        )
+        if corrected:
+            app.logger.info(
+                "Gemini correction success | input='%s' | output='%s' | model='%s'",
+                clean_sentence,
+                corrected,
+                model_name,
+            )
+            return corrected
+
+        app.logger.warning(
+            "Gemini correction empty output; using original sentence. input='%s' model='%s'",
+            clean_sentence,
+            model_name,
+        )
+        return clean_sentence
+    except Exception as exc:
+        app.logger.exception(
+            "Gemini correction failed; using original sentence. input='%s' model='%s' error='%s'",
+            clean_sentence,
+            model_name,
+            exc,
+        )
+        return clean_sentence
 
 
 def _augment_quiz_questions(lesson, quiz):
@@ -1183,7 +1265,7 @@ def speech_to_text():
             input_path = tmp.name
             audio_file.save(input_path)
 
-        # Convert WEBM → WAV
+        # Convert WEBM â†’ WAV
         wav_path = input_path.replace(".webm", ".wav")
 
         audio = AudioSegment.from_file(input_path, format="webm")
@@ -1248,6 +1330,8 @@ LABEL_MAP_PATH = Path(os.getenv("GESTURA_LABEL_MAP_PATH", "Model/artifacts/label
 MODEL_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 CAMERA_INDEX = int(os.getenv("GESTURA_CAMERA_INDEX", "0"))
 CAMERA_BACKEND = cv2.CAP_DSHOW if os.name == "nt" else cv2.CAP_ANY
+PREDICTION_CONFIDENCE_THRESHOLD = float(os.getenv("GESTURA_CONFIDENCE_THRESHOLD", "0.70"))
+UNKNOWN_CONFIDENCE_THRESHOLD = float(os.getenv("GESTURA_UNKNOWN_THRESHOLD", "0.50"))
 
 
 def load_gesture_model():
@@ -1354,7 +1438,7 @@ def generate_frames():
         yield from _yield_error_stream(message)
         return
 
-    with camera_lock:  # ✅ FIX: prevent multiple access
+    with camera_lock:
         cap = cv2.VideoCapture(CAMERA_INDEX, CAMERA_BACKEND)
 
         if not cap.isOpened():
@@ -1373,6 +1457,7 @@ def generate_frames():
 
         sequence = deque(maxlen=model_sequence_length)
         prediction_text = ""
+        prediction_confidence = 0.0
         last_added = ""
 
         try:
@@ -1388,34 +1473,63 @@ def generate_frames():
                     for hand_landmarks in results.multi_hand_landmarks:
                         mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-                sequence.append(extract_landmark_features(results))
+                current_features = extract_landmark_features(results)
+                has_hand_landmarks = bool(results and results.multi_hand_landmarks)
+                no_hand_frame = (not has_hand_landmarks) or is_no_hand_feature_vector(current_features)
 
-                if gesture_model is not None and len(sequence) == model_sequence_length:
-                    input_np = normalize_sequence(
-                        sequence,
-                        sequence_length=model_sequence_length,
-                        feature_size=model_feature_size,
-                    )
-                    input_tensor = torch.tensor(input_np, dtype=torch.float32).unsqueeze(0).to(MODEL_DEVICE)
+                if no_hand_frame:
+                    sequence.clear()
+                    prediction_text = ""
+                    prediction_confidence = 0.0
+                    latest_prediction = {"text": "", "confidence": 0.0, "state": "no_hand"}
+                else:
+                    sequence.append(current_features)
+                    latest_prediction = {"text": "Identifying", "confidence": 0.0, "state": "identifying"}
 
-                    with torch.no_grad():
-                        logits = gesture_model(input_tensor)
-                        pred_idx = int(torch.argmax(logits, dim=1).item())
+                    if gesture_model is not None and len(sequence) == model_sequence_length:
+                        input_np = normalize_sequence(
+                            sequence,
+                            sequence_length=model_sequence_length,
+                            feature_size=model_feature_size,
+                        )
+                        input_tensor = torch.tensor(input_np, dtype=torch.float32).unsqueeze(0).to(MODEL_DEVICE)
 
-                    if gesture_labels and pred_idx < len(gesture_labels):
-                        prediction_text = str(gesture_labels[pred_idx])
-                        latest_prediction = prediction_text
+                        with torch.no_grad():
+                            logits = gesture_model(input_tensor)
+                            probs = torch.softmax(logits, dim=1)
+                            top_confidence, top_index = torch.max(probs, dim=1)
+                            pred_idx = int(top_index.item())
+                            prediction_confidence = float(top_confidence.item())
 
-                        # ✅ Capture logic (FIXED)
-                        if is_capturing:
-                            if prediction_text != last_added:
-                                captured_sequence.append(prediction_text)
-                                last_added = prediction_text
+                        if gesture_labels and pred_idx < len(gesture_labels):
+                            raw_label = str(gesture_labels[pred_idx])
+
+                            if prediction_confidence < UNKNOWN_CONFIDENCE_THRESHOLD:
+                                prediction_text = "Unknown Gesture"
+                                prediction_state = "unknown"
+                            elif prediction_confidence < PREDICTION_CONFIDENCE_THRESHOLD:
+                                prediction_text = "Identifying"
+                                prediction_state = "identifying"
+                            else:
+                                prediction_text = raw_label
+                                prediction_state = "predicted"
+
+                            latest_prediction = {
+                                "text": prediction_text,
+                                "confidence": round(prediction_confidence, 4),
+                                "state": prediction_state,
+                            }
+
+                            if is_capturing and prediction_state == "predicted":
+                                if prediction_text != last_added:
+                                    captured_sequence.append(prediction_text)
+                                    last_added = prediction_text
 
                 if prediction_text:
+                    overlay_confidence = int(round(prediction_confidence * 100))
                     cv2.putText(
                         frame,
-                        f"Prediction: {prediction_text}",
+                        f"Prediction: {prediction_text} ({overlay_confidence}%)",
                         (10, 35),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         1.0,
@@ -1439,13 +1553,31 @@ def generate_frames():
 @app.route('/get_prediction')
 def get_prediction():
     global latest_prediction
-    return jsonify({"text": latest_prediction})
+    return jsonify(latest_prediction)
+
+
+def _build_sentence_from_gesture_tokens(tokens):
+    cleaned_tokens = [str(token).strip() for token in tokens if str(token).strip()]
+    if not cleaned_tokens:
+        return "", ""
+
+    if all(token.isdigit() for token in cleaned_tokens):
+        digit_string = "".join(cleaned_tokens)
+        try:
+            return digit_string, num2words(int(digit_string))
+        except Exception:
+            return digit_string, digit_string
+
+    sentence = " ".join(cleaned_tokens)
+    return sentence, sentence
+
 
 @app.route('/start_capture', methods=['POST'])
 def start_capture():
-    global captured_sequence, is_capturing
+    global captured_sequence, is_capturing, latest_prediction
     captured_sequence = []
     is_capturing = True
+    latest_prediction = {"text": "", "confidence": 0.0, "state": "idle"}
     return jsonify({"status": "started"})
 
 @app.route('/stop_capture', methods=['POST'])
@@ -1461,18 +1593,14 @@ def stop_capture():
             "words": "No input detected"
         })
 
-    combined = "".join(captured_sequence)  # "123"
-
-    try:
-        number_value = int(combined)
-        words = num2words(number_value)
-    except:
-        words = combined
+    combined, words = _build_sentence_from_gesture_tokens(captured_sequence)
+    corrected_words = correct_sentence_with_gemini(words)
 
     return jsonify({
         "sequence": captured_sequence,
         "combined": combined,
-        "words": words
+        "words": corrected_words,
+        "original_words": words
     })
 @app.route('/video_feed')
 def video_feed():
@@ -1484,3 +1612,4 @@ if __name__ == '__main__':
     port = int(os.getenv('FLASK_PORT', '5000'))
     debug = os.getenv('FLASK_DEBUG', 'true').lower() in {'1', 'true', 'yes', 'on'}
     app.run(host=host, port=port, debug=debug)
+

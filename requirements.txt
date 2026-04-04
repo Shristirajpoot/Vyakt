@@ -15,10 +15,6 @@ torch==2.0.1
 
 SpeechRecognition~=3.10.4
 pocketsphinx~=5.0.3
-vosk~=0.3.44
-num2words
-pydub
-email-validator
 vosk~=0.3.45
 num2words
 pydub

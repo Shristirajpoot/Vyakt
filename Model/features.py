@@ -91,3 +91,10 @@ def normalize_sequence(
     if max_abs > 0.0:
         data = data / max_abs
     return data
+
+
+def is_no_hand_feature_vector(feature_vector: Iterable[float], eps: float = 1e-8) -> bool:
+    values = np.asarray(list(feature_vector), dtype=np.float32)
+    if values.size == 0:
+        return True
+    return bool(np.max(np.abs(values)) <= eps)
