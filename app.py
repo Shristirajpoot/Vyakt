@@ -31,7 +31,7 @@ is_capturing = False
 from Model.features import FEATURE_SIZE, SEQUENCE_LENGTH, extract_landmark_features, normalize_sequence
 from Model.gesture_model import GestureTransformer
 from pydub import AudioSegment
-
+from flask import session, redirect, url_for, request
 
 # Load environment variables from .env file
 load_dotenv()
@@ -579,8 +579,9 @@ def index():
 
 @app.route('/learning')
 def learning():
+    if not session.get('username'):
+        return redirect(url_for('login', next=request.url))  # 🔒 only after login
     return render_template('learning.html', username=session.get('username'))
-
 
 @app.get('/api/v1/learning/state')
 def learning_state():
