@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import os
 import pickle
 from pathlib import Path
@@ -11,12 +12,23 @@ from features import FEATURE_SIZE, SEQUENCE_LENGTH, extract_landmark_features
 
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_DATA_DIR = PROJECT_ROOT / "data"
+DEFAULT_OUTPUT_PATH = PROJECT_ROOT / "Model" / "artifacts" / "data_seq.pickle"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Create sequential gesture dataset from class folders.")
-    parser.add_argument("--data-dir", default="data", help="Directory with one folder per class.")
-    parser.add_argument("--output", default="artifacts/data_seq.pickle", help="Output pickle path.")
+    parser.add_argument(
+        "--data-dir",
+        default=str(DEFAULT_DATA_DIR),
+        help="Directory with one folder per class.",
+    )
+    parser.add_argument(
+        "--output",
+        default=str(DEFAULT_OUTPUT_PATH),
+        help="Output pickle path.",
+    )
     parser.add_argument("--sequence-length", type=int, default=SEQUENCE_LENGTH)
     return parser.parse_args()
 
@@ -37,6 +49,16 @@ def is_video(path: Path) -> bool:
 
 def is_image(path: Path) -> bool:
     return path.suffix.lower() in IMAGE_EXTENSIONS
+
+
+def build_data_signature(class_sample_counts: dict[str, int], sequence_length: int, feature_size: int) -> str:
+    signature_payload = {
+        "class_sample_counts": {k: int(class_sample_counts[k]) for k in sorted(class_sample_counts)},
+        "sequence_length": int(sequence_length),
+        "feature_size": int(feature_size),
+    }
+    encoded = repr(signature_payload).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def process_video(video_path: Path, hands, sequence_length: int) -> list[list[float]]:
@@ -77,7 +99,10 @@ def main() -> None:
     if not data_dir.exists() or not data_dir.is_dir():
         raise FileNotFoundError(f"Data directory not found: {data_dir}")
 
-    class_dirs = sorted([p for p in data_dir.iterdir() if p.is_dir()])
+    class_dirs = sorted(
+        [p for p in data_dir.iterdir() if p.is_dir() and not p.name.startswith(".")],
+        key=lambda p: p.name.lower(),
+    )
     if not class_dirs:
         raise ValueError(f"No class folders found in: {data_dir}")
 
@@ -98,6 +123,8 @@ def main() -> None:
     data: list[list[list[float]]] = []
     labels: list[int] = []
     label_map = [class_dir.name for class_dir in class_dirs]
+    label_to_index = {label: idx for idx, label in enumerate(label_map)}
+    class_sample_counts: dict[str, int] = {label: 0 for label in label_map}
 
     for label_index, class_dir in enumerate(class_dirs):
         class_files = sorted([p for p in class_dir.iterdir() if p.is_file()])
@@ -114,6 +141,7 @@ def main() -> None:
 
             data.append(sequence)
             labels.append(label_index)
+            class_sample_counts[class_dir.name] += 1
 
     hands_video.close()
     hands_image.close()
@@ -123,6 +151,11 @@ def main() -> None:
 
     data_array = np.asarray(data, dtype=np.float32)
     labels_array = np.asarray(labels, dtype=np.int64)
+    data_signature = build_data_signature(
+        class_sample_counts=class_sample_counts,
+        sequence_length=args.sequence_length,
+        feature_size=FEATURE_SIZE,
+    )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as f:
@@ -131,8 +164,12 @@ def main() -> None:
                 "data": data_array,
                 "labels": labels_array,
                 "label_map": label_map,
+                "label_to_index": label_to_index,
                 "sequence_length": int(args.sequence_length),
                 "feature_size": int(FEATURE_SIZE),
+                "class_sample_counts": class_sample_counts,
+                "data_signature": data_signature,
+                "source_data_dir": str(data_dir.resolve()),
             },
             f,
         )
@@ -140,7 +177,9 @@ def main() -> None:
     print(f"Saved dataset: {output_path}")
     print(f"Samples: {len(data_array)}")
     print(f"Classes: {len(label_map)} -> {label_map}")
+    print(f"Class sample counts: {class_sample_counts}")
     print(f"Shape: {data_array.shape}")
+    print(f"Data signature: {data_signature}")
 
 
 if __name__ == "__main__":

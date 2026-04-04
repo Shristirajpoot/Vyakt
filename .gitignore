@@ -63,6 +63,7 @@ model.p
 data/
 New_data/
 uploads/
+combined
 
 # Logs
 *.log

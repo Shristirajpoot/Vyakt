@@ -2,6 +2,8 @@
 Flask~=3.0.2
 pymongo
 dnspython
+mysqlclient>=2.2.0
+flask-mysqldb~=2.0.0
 Flask-WTF~=1.2.1
 WTForms~=3.1.2
 python-dotenv~=1.0.1
@@ -15,6 +17,10 @@ torch==2.0.1
 SpeechRecognition~=3.10.4
 pocketsphinx~=5.0.3
 vosk~=0.3.44
+num2words
+pydub
+email-validator
+vosk~=0.3.45
 num2words
 pydub
 email-validator

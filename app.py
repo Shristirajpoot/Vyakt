@@ -589,7 +589,8 @@ def text_to_speech():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 # Video Stream Routes
-MODEL_CHECKPOINT = Path(os.getenv("GESTURA_MODEL_PATH", "Model/artifacts/gesture_transformer_126.pth"))
+MODEL_CHECKPOINT = Path(os.getenv("GESTURA_MODEL_PATH", "Model/artifacts/gesture_transformer.pth"))
+LABEL_MAP_PATH = Path(os.getenv("GESTURA_LABEL_MAP_PATH", "Model/artifacts/label_map.json"))
 MODEL_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 CAMERA_INDEX = int(os.getenv("GESTURA_CAMERA_INDEX", "0"))
 CAMERA_BACKEND = cv2.CAP_DSHOW if os.name == "nt" else cv2.CAP_ANY
@@ -598,26 +599,57 @@ CAMERA_BACKEND = cv2.CAP_DSHOW if os.name == "nt" else cv2.CAP_ANY
 def load_gesture_model():
     if not MODEL_CHECKPOINT.exists():
         print(f"Model checkpoint not found: {MODEL_CHECKPOINT}")
-        return None, []
+        return None, [], SEQUENCE_LENGTH, FEATURE_SIZE
 
     try:
         checkpoint = torch.load(MODEL_CHECKPOINT, map_location=MODEL_DEVICE)
+
+        sequence_length = int(checkpoint.get("sequence_length", SEQUENCE_LENGTH))
+        feature_size = int(checkpoint.get("feature_size", FEATURE_SIZE))
+        num_classes = int(checkpoint.get("num_classes", 0))
+
         label_map = list(checkpoint.get("label_map", []))
+        if LABEL_MAP_PATH.exists():
+            with open(LABEL_MAP_PATH, "r", encoding="utf-8") as f:
+                label_json = json.load(f)
+            index_to_label = label_json.get("index_to_label", {})
+            label_map = [
+                index_to_label[str(i)]
+                for i in range(len(index_to_label))
+                if str(i) in index_to_label
+            ]
+
+        if not label_map and num_classes > 0:
+            label_map = [str(i) for i in range(num_classes)]
+
+        if num_classes <= 0:
+            num_classes = len(label_map)
+
         model = GestureTransformer(
-            input_dim=int(checkpoint.get("feature_size", FEATURE_SIZE)),
-            seq_length=int(checkpoint.get("sequence_length", SEQUENCE_LENGTH)),
-            num_classes=int(checkpoint.get("num_classes", max(len(label_map), 1))),
+            input_dim=feature_size,
+            seq_length=sequence_length,
+            num_classes=max(num_classes, 1),
         )
         model.load_state_dict(checkpoint["model_state_dict"])
         model.to(MODEL_DEVICE)
         model.eval()
-        return model, label_map
+
+        if label_map and len(label_map) != num_classes:
+            print(
+                f"Label map size ({len(label_map)}) does not match model classes ({num_classes}). "
+                "Using checkpoint label_map fallback where possible."
+            )
+            checkpoint_label_map = list(checkpoint.get("label_map", []))
+            if len(checkpoint_label_map) == num_classes:
+                label_map = checkpoint_label_map
+
+        return model, label_map, sequence_length, feature_size
     except Exception as exc:
         print(f"Error loading gesture model: {exc}")
-        return None, []
+        return None, [], SEQUENCE_LENGTH, FEATURE_SIZE
 
 
-gesture_model, gesture_labels = load_gesture_model()
+gesture_model, gesture_labels, model_sequence_length, model_feature_size = load_gesture_model()
 
 
 def _error_frame(message: str, width: int = 960, height: int = 540) -> bytes:
@@ -669,7 +701,7 @@ def generate_frames():
         return
 
     with camera_lock:  # ✅ FIX: prevent multiple access
-        cap = cv2.VideoCapture(0)  # force 0 (works in your case)
+        cap = cv2.VideoCapture(CAMERA_INDEX, CAMERA_BACKEND)
 
         if not cap.isOpened():
             yield from _yield_error_stream("Camera not opening")
@@ -685,7 +717,7 @@ def generate_frames():
             max_num_hands=2,
         )
 
-        sequence = deque(maxlen=SEQUENCE_LENGTH)
+        sequence = deque(maxlen=model_sequence_length)
         prediction_text = ""
         last_added = ""
 
@@ -704,9 +736,13 @@ def generate_frames():
 
                 sequence.append(extract_landmark_features(results))
 
-                if gesture_model is not None and len(sequence) == SEQUENCE_LENGTH:
-                    input_np = normalize_sequence(sequence)
-                    input_tensor = torch.tensor(input_np, dtype=torch.float32).unsqueeze(0)
+                if gesture_model is not None and len(sequence) == model_sequence_length:
+                    input_np = normalize_sequence(
+                        sequence,
+                        sequence_length=model_sequence_length,
+                        feature_size=model_feature_size,
+                    )
+                    input_tensor = torch.tensor(input_np, dtype=torch.float32).unsqueeze(0).to(MODEL_DEVICE)
 
                     with torch.no_grad():
                         logits = gesture_model(input_tensor)
