@@ -1,5 +1,5 @@
 {
-  "database": "gestura_learning",
+  "database": "Vyakt_learning",
   "collections": {
     "users": {
       "description": "Auth profile and user role",

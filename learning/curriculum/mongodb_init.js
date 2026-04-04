@@ -1,4 +1,4 @@
-use gestura_learning;
+use Vyakt_learning;
 
 db.users.createIndex({ email: 1 }, { unique: true, name: 'email_unique' });
 db.users.createIndex({ role: 1 }, { name: 'role_idx' });

@@ -517,7 +517,7 @@ def correct_sentence_with_gemini(sentence: str) -> str:
         app.logger.warning("Gemini correction skipped: GEMINI_API_KEY is not set.")
         return clean_sentence
 
-    gemini_text_model = os.getenv("GEMINI_TEXT_MODEL", "gemini-1.5-flash").strip() or "gemini-1.5-flash"
+    model_name = os.getenv("GEMINI_TEXT_MODEL", "gemini-1.5-flash").strip() or "gemini-1.5-flash"
 
     try:
         payload = {
@@ -543,7 +543,7 @@ def correct_sentence_with_gemini(sentence: str) -> str:
             },
         }
         response = requests.post(
-            f"https://generativelanguage.googleapis.com/v1/models/{gemini_text_model}:generateContent?key={api_key}",
+            f"https://generativelanguage.googleapis.com/v1/models/{model_name}:generateContent?key={api_key}",
             json=payload,
             timeout=12,
         )
@@ -1325,13 +1325,13 @@ def text_to_speech():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 # Video Stream Routes
-MODEL_CHECKPOINT = Path(os.getenv("GESTURA_MODEL_PATH", "Model/artifacts/gesture_transformer.pth"))
-LABEL_MAP_PATH = Path(os.getenv("GESTURA_LABEL_MAP_PATH", "Model/artifacts/label_map.json"))
+MODEL_CHECKPOINT = Path(os.getenv("Vyakt_MODEL_PATH", "Model/artifacts/gesture_transformer.pth"))
+LABEL_MAP_PATH = Path(os.getenv("Vyakt_LABEL_MAP_PATH", "Model/artifacts/label_map.json"))
 MODEL_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-CAMERA_INDEX = int(os.getenv("GESTURA_CAMERA_INDEX", "0"))
+CAMERA_INDEX = int(os.getenv("Vyakt_CAMERA_INDEX", "0"))
 CAMERA_BACKEND = cv2.CAP_DSHOW if os.name == "nt" else cv2.CAP_ANY
-PREDICTION_CONFIDENCE_THRESHOLD = float(os.getenv("GESTURA_CONFIDENCE_THRESHOLD", "0.70"))
-UNKNOWN_CONFIDENCE_THRESHOLD = float(os.getenv("GESTURA_UNKNOWN_THRESHOLD", "0.50"))
+PREDICTION_CONFIDENCE_THRESHOLD = float(os.getenv("Vyakt_CONFIDENCE_THRESHOLD", "0.70"))
+UNKNOWN_CONFIDENCE_THRESHOLD = float(os.getenv("Vyakt_UNKNOWN_THRESHOLD", "0.50"))
 
 
 def load_gesture_model():

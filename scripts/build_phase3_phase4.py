@@ -200,7 +200,7 @@ def build_phase4(levels: list[dict]) -> dict:
 
 def build_mongodb_schema(levels: list[dict]) -> dict:
     return {
-        "database": "gestura_learning",
+        "database": "Vyakt_learning",
         "collections": {
             "users": {
                 "description": "Auth profile and user role",
@@ -262,7 +262,7 @@ def build_mongodb_schema(levels: list[dict]) -> dict:
 
 
 def build_mongosh_init() -> str:
-    return """use gestura_learning;
+    return """use Vyakt_learning;
 
 db.users.createIndex({ email: 1 }, { unique: true, name: 'email_unique' });
 db.users.createIndex({ role: 1 }, { name: 'role_idx' });

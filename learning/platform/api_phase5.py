@@ -15,7 +15,7 @@ learning_api = Blueprint("learning_api", __name__, url_prefix="/api/v1")
 
 
 class LearningRepository:
-    def __init__(self, mongo_uri: str, db_name: str = "gestura_learning") -> None:
+    def __init__(self, mongo_uri: str, db_name: str = "Vyakt_learning") -> None:
         self.client = MongoClient(mongo_uri)
         self.db = self.client[db_name]
 
