@@ -11,11 +11,15 @@ from pathlib import Path
 import uuid
 from collections import deque
 from dotenv import load_dotenv
+from typing import Dict, List, Tuple
 import speech_recognition as sr
 from flask import Flask, render_template, redirect, request, url_for, flash, session, Response, g, jsonify
 from pymongo import MongoClient, ReturnDocument
 from datetime import datetime
-from zoneinfo import ZoneInfo
+try:
+    from zoneinfo import ZoneInfo  # Python 3.9+
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # Python 3.8 fix
 from bson.objectid import ObjectId
 from num2words import num2words
 from flask_wtf import FlaskForm
@@ -128,6 +132,30 @@ _CONTRACTION_PATTERNS = [
     (re.compile(r"'m\b", re.IGNORECASE), " am"),
     (re.compile(r"'s\b", re.IGNORECASE), " is"),
 ]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LANGUAGE MAP  (used by translation + TTS everywhere in the app)
+# ─────────────────────────────────────────────────────────────────────────────
+LANGUAGE_MAP = {
+    "en": "English",
+    "hi": "Hindi",
+    "ml": "Malayalam",
+    "fr": "French",
+    "es": "Spanish",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "de": "German",
+    "ja": "Japanese",
+    "zh": "Chinese (Simplified)",
+    "ar": "Arabic",
+    "pt": "Portuguese",
+    "ru": "Russian",
+    "ko": "Korean",
+    "it": "Italian",
+}
+
+# ElevenLabs multilingual voice ID (Rachel – supports all languages via eleven_multilingual_v2)
+ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "EXAVITQu4vr4xnSDxMaL")
 
 
 def _normalize_asset_key(text):
@@ -343,7 +371,6 @@ def _compute_next_streak(previous_streak, last_activity_day):
 
     gap_days = (today - last_day).days
     if gap_days <= 0:
-        # Same day completion does not inflate streak.
         return int(previous_streak or 0)
     if gap_days == 1:
         return int(previous_streak or 0) + 1
@@ -509,7 +536,6 @@ def _gemini_memory_tips(incorrect_items, lesson_context):
             if any(marker in text for marker in generic_markers):
                 return True
 
-            # Must mention both the mistaken and correct answer for contrast coaching.
             selected_s = str(selected or '').strip().lower()
             correct_s = str(correct or '').strip().lower()
             if selected_s and selected_s not in text:
@@ -517,7 +543,6 @@ def _gemini_memory_tips(incorrect_items, lesson_context):
             if correct_s and correct_s not in text:
                 return True
 
-            # Must include concrete memory structure cues.
             required_cues = ['contrast', 'recall']
             if not any(cue in text for cue in required_cues):
                 return True
@@ -550,18 +575,11 @@ def _gemini_memory_tips(incorrect_items, lesson_context):
         return _build_fallback_memory_tips(incorrect_items)
 
 
-def _asset_for_word(word):
-    stem = _resolve_token_to_asset(str(word).strip().lower())
-    if not stem:
-        stem = str(word).strip()
-    return f"static/assets/{stem}.mp4"
-
-
-_GEMINI_MODEL_CACHE: dict[str, list[tuple[str, str]]] = {}
-
+# ─────────────────────────────────────────────────────────────────────────────
+# GEMINI HELPERS
+# ─────────────────────────────────────────────────────────────────────────────
 
 def _get_gemini_api_key() -> str:
-    # Support both env names used across Gemini docs/examples.
     return (os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")).strip()
 
 
@@ -569,11 +587,14 @@ def _get_gemini_model_name() -> str:
     return (
         os.getenv("GEMINI_TEXT_MODEL", "")
         or os.getenv("GEMINI_MODEL", "")
-        or "gemini-3-flash-preview"
+        or "gemini-2.0-flash"
     ).strip()
 
 
-def _discover_gemini_generate_models(api_key: str) -> list[tuple[str, str]]:
+_GEMINI_MODEL_CACHE: Dict[str, List[Tuple[str, str]]] = {}
+
+
+def _discover_gemini_generate_models(api_key: str) -> List[Tuple[str, str]]:
     cache_key = (api_key or "").strip()[:12]
     if cache_key in _GEMINI_MODEL_CACHE:
         return _GEMINI_MODEL_CACHE[cache_key]
@@ -602,12 +623,134 @@ def _discover_gemini_generate_models(api_key: str) -> list[tuple[str, str]]:
                 exc,
             )
 
-    # Deduplicate while preserving order.
     deduped = list(dict.fromkeys(discovered))
     _GEMINI_MODEL_CACHE[cache_key] = deduped
     if deduped:
         app.logger.info("Gemini discovered models: %s", [f"{a}:{m}" for a, m in deduped[:8]])
     return deduped
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ✅ FIXED translate_text_gemini  — word-level accurate, NO generic fallbacks
+# ─────────────────────────────────────────────────────────────────────────────
+
+def translate_text_gemini(text: str, target_lang: str = "en") -> str:
+    """
+    Translate `text` into `target_lang` using Gemini.
+
+    Key fixes vs old version:
+    - NO hardcoded fallback dict (was causing everything → "namaste").
+    - Strong, zero-shot prompt forces word-level accuracy.
+    - On any failure → return original text unchanged (not a generic word).
+    - Tries gemini-2.0-flash first, falls back to discovered models.
+    """
+    text = str(text or "").strip()
+    if not text:
+        return text
+
+    # Nothing to translate if target is already English
+    if target_lang == "en":
+        return text
+
+    api_key = _get_gemini_api_key()
+    if not api_key:
+        app.logger.warning("translate_text_gemini: GEMINI_API_KEY not set – returning original.")
+        return text
+
+    lang_name = LANGUAGE_MAP.get(target_lang, target_lang)
+
+    # Build a strict, few-shot prompt so Gemini outputs only the translated word/phrase
+    prompt = f"""You are a strict translator. Translate the text below into {lang_name}.
+
+RULES (follow every rule, no exceptions):
+1. If the input is a SINGLE WORD → output EXACTLY one word (the translation). Nothing else.
+2. If the input is a SENTENCE → output only the translated sentence. Nothing else.
+3. DO NOT add explanations, greetings, punctuation marks that weren't in the original, or any extra text.
+4. DO NOT transliterate – use the native script (e.g. Hindi → Devanagari, Japanese → Kanji/Kana).
+5. Preserve the original meaning exactly.
+
+Few-shot examples (English → Hindi):
+YOU → तुम
+ONE → एक
+HELLO → नमस्ते
+GOOD MORNING → शुभ प्रभात
+I am happy → मैं खुश हूँ
+
+Now translate (output the translation only, nothing else):
+{text}"""
+
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.1,   # very low → deterministic output
+            "maxOutputTokens": 100,
+        },
+    }
+
+    # Model preference list: try fast flash models first
+    preferred_models = ["gemini-2.0-flash", "gemini-2.0-flash-001", "gemini-1.5-flash"]
+    attempts: List[Tuple[str, str]] = [("v1beta", m) for m in preferred_models]
+
+    # Also include anything discovered from the API
+    discovered = _discover_gemini_generate_models(api_key)
+    for item in discovered:
+        if item not in attempts:
+            attempts.append(item)
+
+    for api_version, model_name in attempts:
+        url = (
+            f"https://generativelanguage.googleapis.com/"
+            f"{api_version}/models/{model_name}:generateContent?key={api_key}"
+        )
+        try:
+            res = requests.post(url, json=payload, timeout=10)
+            res.raise_for_status()
+            data = res.json()
+
+            translated = (
+                data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+                .strip()
+            )
+
+            # Strip surrounding quotes Gemini sometimes adds
+            translated = translated.strip('"\'').strip()
+
+            if not translated:
+                app.logger.warning(
+                    "translate_text_gemini: empty response from model='%s'. Trying next.", model_name
+                )
+                continue
+
+            app.logger.info(
+                "translate_text_gemini | original='%s' | lang='%s' | translated='%s' | model='%s'",
+                text, target_lang, translated, model_name,
+            )
+            print(f"🔵 ORIGINAL: {text}")
+            print(f"🌍 TARGET: {target_lang} ({lang_name})")
+            print(f"🟢 TRANSLATED: {translated}")
+            return translated
+
+        except Exception as exc:
+            app.logger.warning(
+                "translate_text_gemini: model='%s' failed: %s. Trying next.", model_name, exc
+            )
+
+    # All models failed – return original text unchanged (NOT a generic word)
+    app.logger.error(
+        "translate_text_gemini: all models exhausted. Returning original text='%s'.", text
+    )
+    print(f"❌ Translation failed – returning original: {text}")
+    return text
+
+
+def _asset_for_word(word):
+    stem = _resolve_token_to_asset(str(word).strip().lower())
+    if not stem:
+        stem = str(word).strip()
+    return f"static/assets/{stem}.mp4"
 
 
 def correct_sentence_with_gemini(sentence: str) -> str:
@@ -678,59 +821,46 @@ def correct_sentence_with_gemini(sentence: str) -> str:
     remaining_discovered = [item for item in discovered_models if item not in preferred_discovered and item[0] == "v1beta"]
     attempts.extend(preferred_discovered)
     attempts.extend(remaining_discovered)
-    # If discovery fails, still try configured/default model on v1beta.
     attempts.append(("v1beta", configured_model))
-    attempts.append(("v1beta", "gemini-3-flash-preview"))
+    attempts.append(("v1beta", "gemini-2.0-flash"))
     attempts = list(dict.fromkeys(attempts))
 
     for api_version, gemini_text_model in attempts:
-            try:
-                url = (
-                    f"https://generativelanguage.googleapis.com/"
-                    f"{api_version}/models/{gemini_text_model}:generateContent?key={api_key}"
-                )
-                response = requests.post(
-                    url,
-                    json=payload,
-                    timeout=8,
-                )
-                response.raise_for_status()
-                data = response.json()
-                corrected = (
-                    data.get("candidates", [{}])[0]
-                    .get("content", {})
-                    .get("parts", [{}])[0]
-                    .get("text", "")
-                    .strip()
-                )
-                corrected = corrected.replace("\n", " ").strip(" \"'")
+        try:
+            url = (
+                f"https://generativelanguage.googleapis.com/"
+                f"{api_version}/models/{gemini_text_model}:generateContent?key={api_key}"
+            )
+            response = requests.post(url, json=payload, timeout=8)
+            response.raise_for_status()
+            data = response.json()
+            corrected = (
+                data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+                .strip()
+            )
+            corrected = corrected.replace("\n", " ").strip(" \"'")
 
-                if corrected:
-                    if corrected.lower() == clean_sentence.lower():
-                        corrected = _local_cleanup(clean_sentence)
-                    app.logger.info(
-                        "Gemini correction success | input='%s' | output='%s' | model='%s' | api='%s'",
-                        clean_sentence,
-                        corrected,
-                        gemini_text_model,
-                        api_version,
-                    )
-                    return corrected
+            if corrected:
+                if corrected.lower() == clean_sentence.lower():
+                    corrected = _local_cleanup(clean_sentence)
+                app.logger.info(
+                    "Gemini correction success | input='%s' | output='%s' | model='%s' | api='%s'",
+                    clean_sentence, corrected, gemini_text_model, api_version,
+                )
+                return corrected
 
-                app.logger.warning(
-                    "Gemini correction empty output; trying fallback. input='%s' model='%s' api='%s'",
-                    clean_sentence,
-                    gemini_text_model,
-                    api_version,
-                )
-            except Exception as exc:
-                app.logger.warning(
-                    "Gemini correction failed; trying fallback. input='%s' model='%s' api='%s' error='%s'",
-                    clean_sentence,
-                    gemini_text_model,
-                    api_version,
-                    exc,
-                )
+            app.logger.warning(
+                "Gemini correction empty output; trying fallback. input='%s' model='%s' api='%s'",
+                clean_sentence, gemini_text_model, api_version,
+            )
+        except Exception as exc:
+            app.logger.warning(
+                "Gemini correction failed; trying fallback. input='%s' model='%s' api='%s' error='%s'",
+                clean_sentence, gemini_text_model, api_version, exc,
+            )
 
     app.logger.error(
         "Gemini correction exhausted all models; using original sentence. input='%s'",
@@ -770,7 +900,6 @@ def _augment_quiz_questions(lesson, quiz):
                 if len(options) == 4:
                     break
 
-        # Keep order deterministic but avoid always placing correct answer last.
         rotate = (next_index - 1) % len(options)
         options = options[rotate:] + options[:rotate]
 
@@ -802,7 +931,10 @@ def _lesson_payload(lesson_id):
 _ensure_learning_indexes_and_seed_data()
 
 
-# Routes
+# ─────────────────────────────────────────────────────────────────────────────
+# ROUTES
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.route('/')
 def home():
     if 'username' in session:
@@ -820,7 +952,7 @@ def index():
 @app.route('/learning')
 def learning():
     if not session.get('username'):
-        return redirect(url_for('login', next=request.url))  # 🔒 only after login
+        return redirect(url_for('login', next=request.url))
     return render_template('learning.html', username=session.get('username'))
 
 @app.get('/api/v1/learning/state')
@@ -1248,8 +1380,7 @@ def login():
                 session['username'] = user['username']
                 session['email'] = user['email']
                 session['user_id'] = str(user['_id'])
-                
-                # Session and Login History
+
                 session_id = str(uuid.uuid4())
                 db.sessions.insert_one({
                     "session_id": session_id,
@@ -1257,14 +1388,14 @@ def login():
                     "created_at": datetime.now(),
                     "last_active": datetime.now()
                 })
-                
+
                 ip_address = request.remote_addr
                 db.user_login_history.insert_one({
                     "user_id": str(user['_id']),
                     "ip_address": ip_address,
                     "successful": 1
                 })
-                
+
                 db.logs.insert_one({
                     "user_id": str(user['_id']),
                     "activity_type": 'login',
@@ -1272,7 +1403,7 @@ def login():
                     "timestamp": datetime.now()
                 })
                 session['session_id'] = session_id
-                
+
                 flash('You are now logged in', 'success')
                 return redirect(url_for('index'))
             else:
@@ -1286,10 +1417,10 @@ def logout():
     if 'user_id' in session:
         user_id = session['user_id']
         username = session['username']
-        
+
         db.logs.insert_one({
-            "user_id": user_id, 
-            "activity_type": 'logout', 
+            "user_id": user_id,
+            "activity_type": 'logout',
             "description": f'{username} logged out',
             "timestamp": datetime.now()
         })
@@ -1306,7 +1437,7 @@ def logout():
             {"session_id": session_id},
             {"$set": {"last_active": datetime.now()}}
         )
-        
+
     session.clear()
     flash('You have been successfully logged out!', 'success')
     return redirect(url_for('login'))
@@ -1343,20 +1474,19 @@ def profile():
         if profile_picture:
             upload_folder = os.path.join(app.root_path, 'static', 'uploads')
             os.makedirs(upload_folder, exist_ok=True)
-            
+
             image_filename = secure_filename(profile_picture.filename)
             profile_picture.save(os.path.join(upload_folder, image_filename))
             db_path = f'uploads/{image_filename}'
             update_fields['profile_picture'] = db_path
 
         db.users.update_one({"email": session['email']}, {"$set": update_fields})
-        
+
         if email != session['email']:
             session['email'] = email
-            
+
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('profile'))
-
 
     return render_template('profile.html', user=user_data)
 
@@ -1382,7 +1512,7 @@ def settings():
 
             flash(f'Theme changed to {selected_theme}!', 'success')
             return redirect(url_for('settings'))
-        
+
         theme_record = db.settings.find_one({"settings_user_id": session['user_id']})
         current_theme = theme_record.get('dark_mode') if theme_record else session.get('theme', 'default')
 
@@ -1404,14 +1534,14 @@ def feedback():
     if request.method == 'POST':
         feedback_text = request.form.get('feedback')
         rating = request.form.get('rating')
-        
+
         if not feedback_text:
             flash('Feedback cannot be empty!', 'danger')
             return redirect(url_for('feedback'))
-        
+
         if rating == '':
             rating = None
-            
+
         db.feedback.insert_one({
             "feedback_user_id": session['user_id'],
             "message": feedback_text,
@@ -1432,11 +1562,11 @@ def contact():
 
     if request.method == 'POST':
         message = request.form['message']
-        
+
         user_id = session.get('user_id')
         if user_id:
             db.contact.insert_one({
-                "customer_id": user_id, 
+                "customer_id": user_id,
                 "message": message,
                 "timestamp": datetime.now()
             })
@@ -1465,14 +1595,44 @@ def animation():
 
     text = ""
     words = []
+    final_sentence = ""
 
     if request.method == 'POST':
-        text = request.form.get('sen', '')
+        text = request.form.get('sen', '').strip()
         remove_stopwords = request.form.get('remove_stopwords') == 'on'
-        words = process_text_for_animation(text, remove_stopwords=remove_stopwords)
 
-    return render_template('animation.html', words=words, text=text)
+        # 🔹 FLOW 1: Animation (letters allowed)
+        words = process_text_for_animation(text, remove_stopwords)
 
+        # 🔹 FLOW 2: Sentence (VERY IMPORTANT FIX)
+        # ❌ DO NOT use words
+        # ✅ Use original user input
+        final_sentence = correct_sentence_with_gemini(text)
+
+    return render_template(
+        'animation.html',
+        words=words,
+        text=text,
+        final_sentence=final_sentence
+    )
+# ─────────────────────────────────────────────────────────────────────────────
+# ✅ NEW: expose supported languages to frontend
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/v1/languages')
+def get_languages():
+    """Return all supported language codes and names for frontend dropdowns."""
+    return jsonify({
+        "languages": [
+            {"code": code, "name": name}
+            for code, name in LANGUAGE_MAP.items()
+        ]
+    })
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ✅ SPEECH-TO-TEXT  (unchanged — already correct)
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/speech_to_text', methods=['POST'])
 def speech_to_text():
@@ -1484,71 +1644,204 @@ def speech_to_text():
         return jsonify({"error": "No audio file provided"}), 400
 
     try:
-        # Save WEBM file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
             input_path = tmp.name
             audio_file.save(input_path)
 
-        # Convert WEBM â†’ WAV
         wav_path = input_path.replace(".webm", ".wav")
-
         audio = AudioSegment.from_file(input_path, format="webm")
         audio.export(wav_path, format="wav", parameters=["-ac", "1", "-ar", "16000"])
 
-        # Speech Recognition
         recognizer = sr.Recognizer()
         with sr.AudioFile(wav_path) as source:
             audio_data = recognizer.record(source)
 
-        text = recognizer.recognize_google(audio_data)
+        lang_map = {
+            "en": "en-US",
+            "hi": "hi-IN",
+            "ml": "ml-IN",
+            "fr": "fr-FR",
+            "es": "es-ES",
+            "ta": "ta-IN",
+            "te": "te-IN",
+            "de": "de-DE",
+            "ja": "ja-JP",
+            "zh": "zh-CN",
+            "ar": "ar-SA",
+            "pt": "pt-BR",
+            "ru": "ru-RU",
+            "ko": "ko-KR",
+            "it": "it-IT",
+        }
 
+        user_lang = request.form.get("lang", "en")
+        lang_code = lang_map.get(user_lang, "en-US")
+
+        text = recognizer.recognize_google(audio_data, language=lang_code)
         return jsonify({"text": text})
 
     except Exception as e:
         return jsonify({"error": f"Speech processing failed: {str(e)}"}), 500
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ✅ FIXED TEXT-TO-SPEECH  — proper multilingual voice + voice settings
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.route('/text_to_speech', methods=['POST'])
 def text_to_speech():
     if 'username' not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
     data = request.get_json()
-    text = data.get("text", "")
+    text = str(data.get("text", "")).strip()
+    lang = str(data.get("lang", "en")).strip()
 
     if not text:
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        api_key = os.getenv("ELEVENLABS_API_KEY")
+        # ── Step 1: translate to target language ──────────────────────────────
+        translated_text = translate_text_gemini(text, lang)
+        print(f"🔵 ORIGINAL: {text}")
+        print(f"🌍 LANG: {lang}")
+        print(f"🟢 TRANSLATED: {translated_text}")
 
-        url = "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb"
+        # ── Step 2: ElevenLabs TTS  (multilingual v2 + voice settings) ────────
+        api_key = os.getenv("ELEVENLABS_API_KEY")
+        if not api_key:
+            return jsonify({"error": "ElevenLabs API key not configured"}), 500
+
+        tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{ELEVENLABS_VOICE_ID}"
 
         headers = {
             "xi-api-key": api_key,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
-        payload = {
-            "text": text,
-            "model_id": "eleven_multilingual_v2"
+        # ✅ Fixed payload: multilingual model + voice_settings for quality
+        tts_payload = {
+            "text": translated_text,
+            "model_id": "eleven_multilingual_v2",
+            "voice_settings": {
+                "stability": 0.5,
+                "similarity_boost": 0.8,
+                "style": 0.0,
+                "use_speaker_boost": True,
+            },
         }
 
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(tts_url, json=tts_payload, headers=headers, timeout=30)
 
         if response.status_code != 200:
-            return jsonify({"error": "TTS failed"}), 500
+            app.logger.error(
+                "ElevenLabs TTS failed: status=%s body=%s",
+                response.status_code, response.text[:300],
+            )
+            return jsonify({"error": f"TTS API error {response.status_code}"}), 500
 
-        # Save audio
         filename = f"{uuid.uuid4()}.mp3"
         filepath = os.path.join("static", filename)
+        os.makedirs("static", exist_ok=True)
 
         with open(filepath, "wb") as f:
             f.write(response.content)
 
-        return jsonify({"audio_url": url_for('static', filename=filename)})
+        return jsonify({
+            "audio_url": url_for('static', filename=filename),
+            "translated_text": translated_text,
+            "original_text": text,
+            "lang": lang,
+        })
 
     except Exception as e:
+        app.logger.exception("text_to_speech error")
         return jsonify({"error": str(e)}), 500
-# Video Stream Routes
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ✅ NEW: translate + speak a predicted sign label  (used by sign-to-voice UI)
+# Frontend calls: POST /api/v1/sign_voice  { "text": "hello", "lang": "hi" }
+# Returns { translated_text, audio_url }
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/v1/sign_voice', methods=['POST'])
+def sign_voice():
+    """
+    Translate a predicted sign label into the chosen language and return TTS audio.
+    This powers the real-time "Sign → Voice in your language" feature.
+    """
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    text = str(data.get("text", "")).strip()
+    lang = str(data.get("lang", "en")).strip()
+
+    if not text:
+        return jsonify({"error": "text is required"}), 400
+
+    # Translate the sign label
+    translated = translate_text_gemini(text, lang)
+
+    # Generate TTS
+    api_key = os.getenv("ELEVENLABS_API_KEY")
+    if not api_key:
+        # Return translation even if TTS is unavailable
+        return jsonify({
+            "translated_text": translated,
+            "audio_url": None,
+            "error": "ElevenLabs API key not configured",
+        })
+
+    tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{ELEVENLABS_VOICE_ID}"
+    headers = {"xi-api-key": api_key, "Content-Type": "application/json"}
+    tts_payload = {
+        "text": translated,
+        "model_id": "eleven_multilingual_v2",
+        "voice_settings": {
+            "stability": 0.5,
+            "similarity_boost": 0.8,
+            "style": 0.0,
+            "use_speaker_boost": True,
+        },
+    }
+
+    try:
+        res = requests.post(tts_url, json=tts_payload, headers=headers, timeout=30)
+        if res.status_code != 200:
+            return jsonify({
+                "translated_text": translated,
+                "audio_url": None,
+                "error": f"TTS API error {res.status_code}",
+            })
+
+        filename = f"{uuid.uuid4()}.mp3"
+        filepath = os.path.join("static", filename)
+        os.makedirs("static", exist_ok=True)
+        with open(filepath, "wb") as f:
+            f.write(res.content)
+
+        return jsonify({
+            "translated_text": translated,
+            "audio_url": url_for('static', filename=filename),
+            "original_text": text,
+            "lang": lang,
+        })
+
+    except Exception as exc:
+        app.logger.exception("sign_voice TTS error")
+        return jsonify({
+            "translated_text": translated,
+            "audio_url": None,
+            "error": str(exc),
+        })
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VIDEO STREAM / GESTURE RECOGNITION
+# ─────────────────────────────────────────────────────────────────────────────
+
 MODEL_CHECKPOINT = Path(os.getenv("Vyakt_MODEL_PATH", "Model/artifacts/gesture_transformer.pth"))
 LABEL_MAP_PATH = Path(os.getenv("Vyakt_LABEL_MAP_PATH", "Model/artifacts/label_map.json"))
 MODEL_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -2056,6 +2349,7 @@ def stop_capture():
         "capture_session_id": capture_session_id,
     }
     return jsonify(last_capture_result)
+
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -2066,4 +2360,3 @@ if __name__ == '__main__':
     port = int(os.getenv('FLASK_PORT', '5000'))
     debug = os.getenv('FLASK_DEBUG', 'true').lower() in {'1', 'true', 'yes', 'on'}
     app.run(host=host, port=port, debug=debug)
-

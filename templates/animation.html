@@ -8,22 +8,38 @@
 
 {% block content %}
 <section class="container animation-container">
+
   <div class="text-center mb-3">
     <h1 style="color: var(--primary-color);">Text to Sign</h1>
   </div>
 
+  <!-- 🌍 Language Selector -->
+  <div class="text-center mb-3">
+    <label style="font-weight:600;">🌍 Select Language:</label><br>
+    <select id="languageSelect" class="form-control" style="width:200px; margin:auto;">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="ml">Malayalam</option>
+      <option value="fr">French</option>
+      <option value="es">Spanish</option>
+    </select>
+  </div>
+
+  <!-- INPUT -->
   <div class="input-section">
     <form method="POST" action="{{ url_for('animation') }}" id="animForm">
+
       <div class="input-controls">
-        <input type="text" name="sen" class="form-control text-input" placeholder="Type text to translate..."
-          value="{{ text }}">
-        <button type="button" id="micBtn" class="btn btn-outline mic-btn" title="Speak">🎤</button>
+        <input type="text" name="sen" class="form-control text-input"
+          placeholder="Type text to translate..." value="{{ text }}">
+
+        <button type="button" id="micBtn" class="btn btn-outline mic-btn">🎤</button>
       </div>
 
       <div class="form-group">
-        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <label style="display:flex; gap:8px; align-items:center;">
           <input type="checkbox" name="remove_stopwords" checked>
-          <span>Remove stop words (improved accuracy)</span>
+          Remove stop words
         </label>
       </div>
 
@@ -33,113 +49,36 @@
 
   {% if words %}
   <div class="animation-display">
-    <!-- Video Player -->
-    <video id="signVideo" class="video-player" controls autoplay muted>
-      <source src="" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
 
+    <!-- 🎬 VIDEO -->
+    <video id="signVideo" class="video-player" autoplay muted playsinline></video>
+
+    <!-- WORD BADGES -->
     <div class="word-list">
       {% for word in words %}
-      <span class="word-badge">{{ word }}</span>
+      <span class="word-badge" data-word="{{ word }}">{{ word }}</span>
       {% endfor %}
     </div>
 
+    <!-- CURRENT WORD -->
     <div class="text-center mt-3">
-      <p id="currentWordDisplay" style="font-weight: bold; font-size: 1.2rem; min-height: 1.5rem;"></p>
+      <p id="currentWordDisplay"></p>
     </div>
+
+    <!-- ✅ FINAL SENTENCE — HIDDEN from display but used for TTS -->
+    {% if final_sentence %}
+    <div class="text-center mt-4">
+      <h3 style="color:green;">Final Sentence:</h3>
+      <h2 id="finalSentence" data-sentence="{{ final_sentence }}">{{ final_sentence }}</h2>
+    </div>
+    {% endif %}
+
   </div>
   {% endif %}
+
 </section>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/pages/animation.js') }}"></script>
-
-<script>
-{% if words %}
-document.addEventListener('DOMContentLoaded', () => {
-
-  const videoPlayer = document.getElementById('signVideo');
-  const currentWordDisplay = document.getElementById('currentWordDisplay');
-
-  // Playlist
-  const playlist = [
-    {% for word in words %}
-    {
-      word: "{{ word }}",
-      url: "{{ url_for('static', filename='assets/' + word + '.mp4') }}"
-    },
-    {% endfor %}
-  ];
-
-  let index = 0;
-  let currentAudio = null;
-
-  // 🔊 Speak function (ElevenLabs)
-  function speakText(word) {
-    fetch("/text_to_speech", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ text: word })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.audio_url) {
-
-        // Stop previous audio cleanly
-        if (currentAudio) {
-          currentAudio.pause();
-          currentAudio.currentTime = 0;
-        }
-
-        currentAudio = new Audio(data.audio_url);
-        currentAudio.play();
-      }
-    })
-    .catch(err => console.error("TTS error:", err));
-  }
-
-  // 🎬 Play videos + 🔊 voice sync
-  function playNext() {
-    if (index < playlist.length) {
-
-      const item = playlist[index];
-
-      videoPlayer.src = item.url;
-      currentWordDisplay.textContent = `Signing: "${item.word}"`;
-
-      videoPlayer.play()
-        .then(() => {
-          // 🔥 Slight delay for better sync
-          setTimeout(() => speakText(item.word), 300);
-        })
-        .catch(e => console.log("Autoplay blocked"));
-
-      index++;
-
-    } else {
-      index = 0; // reset (optional loop)
-    }
-  }
-
-  // When one video ends → next
-  videoPlayer.addEventListener('ended', playNext);
-
-  // Handle missing video
-  videoPlayer.addEventListener('error', () => {
-    console.log("Video not found, skipping...");
-    playNext();
-  });
-
-  // Start
-  if (playlist.length > 0) {
-    playNext();
-  }
-
-});
-{% endif %}
-</script>
 {% endblock %}

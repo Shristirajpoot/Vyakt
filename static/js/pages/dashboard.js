@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
+
     const startCameraButton = document.getElementById('startCameraButton');
     const closeCameraButton = document.getElementById('closeCameraButton');
     const cameraFeedContainer = document.getElementById('cameraFeedContainer');
@@ -12,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startCapture = document.getElementById('startCapture');
     const stopCapture = document.getElementById('stopCapture');
+
+    const languageSelect = document.getElementById('languageSelect'); // 🌍 NEW
 
     let currentAudio = null;
     let lastSpoken = "";
@@ -27,9 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEFAULT_FRAME_DELAY_MS = 140;
 
     function scheduleNextFrame(delayMs = DEFAULT_FRAME_DELAY_MS) {
-        if (frameTimer) {
-            clearTimeout(frameTimer);
-        }
+        if (frameTimer) clearTimeout(frameTimer);
         frameTimer = setTimeout(sendFrame, Math.max(0, delayMs));
     }
 
@@ -38,29 +39,33 @@ document.addEventListener('DOMContentLoaded', () => {
         predictionConfidence.innerText = "";
     }
 
+    // 🌍 MULTILINGUAL SPEAK
     function speakText(text) {
+        const lang = languageSelect ? languageSelect.value : "en";
+
         fetch('/text_to_speech', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text }),
+            body: JSON.stringify({ text, lang })
         })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.audio_url) {
-                    if (currentAudio) {
-                        currentAudio.pause();
-                        currentAudio.currentTime = 0;
-                    }
-                    currentAudio = new Audio(data.audio_url);
-                    currentAudio.play();
+        .then(res => res.json())
+        .then(data => {
+            if (data.audio_url) {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
                 }
-            })
-            .catch(() => {});
+                currentAudio = new Audio(data.audio_url);
+                currentAudio.play().catch(() => {});
+            }
+        })
+        .catch(err => console.log("TTS error:", err));
     }
 
     async function sendFrame() {
         if (sending || !cameraVideo.videoWidth) return;
         sending = true;
+
         const startedAt = performance.now();
 
         try {
@@ -69,16 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 MAX_UPLOAD_HEIGHT / cameraVideo.videoHeight,
                 1
             );
-            const uploadWidth = Math.max(1, Math.round(cameraVideo.videoWidth * scale));
-            const uploadHeight = Math.max(1, Math.round(cameraVideo.videoHeight * scale));
 
-            if (cameraCanvas.width !== uploadWidth || cameraCanvas.height !== uploadHeight) {
-                cameraCanvas.width = uploadWidth;
-                cameraCanvas.height = uploadHeight;
-            }
+            const w = Math.round(cameraVideo.videoWidth * scale);
+            const h = Math.round(cameraVideo.videoHeight * scale);
+
+            cameraCanvas.width = w;
+            cameraCanvas.height = h;
 
             const ctx = cameraCanvas.getContext('2d');
-            ctx.drawImage(cameraVideo, 0, 0, uploadWidth, uploadHeight);
+            ctx.drawImage(cameraVideo, 0, 0, w, h);
+
             const dataUrl = cameraCanvas.toDataURL('image/jpeg', 0.7);
 
             const res = await fetch('/process_frame', {
@@ -86,9 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ image: dataUrl }),
             });
+
             const data = await res.json();
 
-            // Show annotated frame with landmarks
             if (data.annotated_frame) {
                 annotatedFeed.src = data.annotated_frame;
                 annotatedFeed.style.display = 'block';
@@ -109,22 +114,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     lastSpoken = text;
                 }
             }
+
         } catch {
             hideLivePrediction();
         } finally {
             sending = false;
+
             const elapsed = performance.now() - startedAt;
             const nextDelay = Math.min(
                 MAX_FRAME_DELAY_MS,
-                Math.max(MIN_FRAME_DELAY_MS, Math.round(elapsed * 1.15))
+                Math.max(MIN_FRAME_DELAY_MS, Math.round(elapsed * 1.2))
             );
+
             if (mediaStream) {
                 scheduleNextFrame(nextDelay);
             }
         }
     }
 
+    // 🎥 START CAMERA
     startCameraButton.addEventListener('click', async () => {
+
         try {
             await fetch('/reset_capture_state', { method: 'POST' });
             await fetch('/reset_frame_state', { method: 'POST' });
@@ -132,46 +142,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: 'user',
-                    width: { ideal: 640, max: 960 },
-                    height: { ideal: 480, max: 720 },
-                    frameRate: { ideal: 24, max: 30 },
-                },
-                audio: false,
+                video: true,
+                audio: false
             });
         } catch (err) {
-            alert('Camera permission denied or not available: ' + err.message);
+            alert("Camera error: " + err.message);
             return;
         }
 
         cameraVideo.srcObject = mediaStream;
-        cameraFeedContainer.style.display = 'block';
-        finalText.innerText = '';
 
+        cameraFeedContainer.style.display = 'block';
         startCameraButton.style.display = 'none';
         closeCameraButton.style.display = 'inline-flex';
         startCapture.style.display = 'inline-flex';
         stopCapture.style.display = 'inline-flex';
 
-        // Wait for video to actually start playing before sending frames
-        cameraVideo.onloadeddata = () => {
-            sendFrame();
-        };
+        cameraVideo.onloadeddata = () => sendFrame();
     });
 
+    // ❌ CLOSE CAMERA
     closeCameraButton.addEventListener('click', () => {
-        if (frameTimer) {
-            clearTimeout(frameTimer);
-            frameTimer = null;
-        }
+
+        if (frameTimer) clearTimeout(frameTimer);
 
         if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop());
+            mediaStream.getTracks().forEach(t => t.stop());
             mediaStream = null;
         }
+
         cameraVideo.srcObject = null;
-        annotatedFeed.src = '';
         annotatedFeed.style.display = 'none';
         cameraFeedContainer.style.display = 'none';
 
@@ -190,37 +190,38 @@ document.addEventListener('DOMContentLoaded', () => {
         lastSpoken = '';
     });
 
+    // ▶ START CAPTURE
     startCapture.addEventListener('click', async () => {
         await fetch('/start_capture', { method: 'POST' });
 
-        finalText.innerText = 'Capturing...';
-        startCapture.classList.add('capturing');
+        finalText.innerText = "Capturing...";
+        startCapture.classList.add("capturing");
 
         startCapture.disabled = true;
         stopCapture.disabled = false;
     });
 
+    // ⏹ STOP CAPTURE
     stopCapture.addEventListener('click', async () => {
-        if (stopInProgress) {
-            return;
-        }
+
+        if (stopInProgress) return;
+
         stopInProgress = true;
         stopCapture.disabled = true;
 
         const res = await fetch('/stop_capture', { method: 'POST' });
         const data = await res.json();
 
-        if (data.words && data.words.trim() !== '') {
+        if (data.words) {
             finalText.innerText = `Final: ${data.words}`;
             speakText(data.words);
-        } else {
-            finalText.innerText = '';
         }
 
-        startCapture.classList.remove('capturing');
+        startCapture.classList.remove("capturing");
 
         startCapture.disabled = false;
         stopCapture.disabled = true;
         stopInProgress = false;
     });
+
 });
