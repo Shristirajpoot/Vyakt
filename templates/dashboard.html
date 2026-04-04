@@ -71,8 +71,7 @@
     <!-- Buttons -->
     <div class="action-buttons" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
 
-        <button id="startCameraButton" class="btn btn-primary"
-            data-feed-url="{{ url_for('video_feed') }}">
+        <button id="startCameraButton" class="btn btn-primary">
             🎥 Start Camera
         </button>
 
@@ -101,7 +100,12 @@
 
         <div class="card camera-box">
             <h2 style="color: var(--primary-color);">Camera Feed</h2>
-            <img id="cameraFeed" src="" alt="Camera Feed" class="camera-feed-img">
+            <div style="position:relative;">
+                <video id="cameraVideo" autoplay playsinline muted class="camera-feed-img"></video>
+                <img id="annotatedFeed" alt="Camera Feed" class="camera-feed-img"
+                     style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">
+            </div>
+            <canvas id="cameraCanvas" style="display:none;"></canvas>
         </div>
 
         <div class="text-center mt-3">
