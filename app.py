@@ -13,8 +13,9 @@ from collections import deque
 from dotenv import load_dotenv
 import speech_recognition as sr
 from flask import Flask, render_template, redirect, request, url_for, flash, session, Response, g, jsonify
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from bson.objectid import ObjectId
 from num2words import num2words
 from flask_wtf import FlaskForm
@@ -281,6 +282,18 @@ def _utc_now():
     return datetime.utcnow()
 
 
+def _learning_timezone():
+    tz_name = (os.getenv('APP_TIMEZONE', 'Asia/Kolkata') or 'Asia/Kolkata').strip()
+    try:
+        return ZoneInfo(tz_name)
+    except Exception:
+        return ZoneInfo('UTC')
+
+
+def _today_local_str():
+    return datetime.now(_learning_timezone()).strftime('%Y-%m-%d')
+
+
 def _learning_user_key():
     if session.get('user_id'):
         return f"user:{session['user_id']}"
@@ -314,11 +327,12 @@ def _default_learning_progress():
         'total_correct_answers': 0,
         'total_xp_earned': 0,
         'last_activity_day': None,
+        'last_claim_date': None,
     }
 
 
 def _compute_next_streak(previous_streak, last_activity_day):
-    today = datetime.utcnow().date()
+    today = datetime.now(_learning_timezone()).date()
     if not last_activity_day:
         return 1
 
@@ -812,7 +826,73 @@ def learning():
 @app.get('/api/v1/learning/state')
 def learning_state():
     progress = _get_learning_progress(_learning_user_key())
+    today = _today_local_str()
+    progress['reward_claimed_today'] = progress.get('last_claim_date') == today
+    progress['reward_today'] = today
     return jsonify(progress)
+
+
+@app.post('/claim_reward')
+def claim_reward():
+    if not MONGO_AVAILABLE or db is None:
+        return jsonify(
+            {
+                'success': False,
+                'message': 'Reward service unavailable',
+                'new_score': 0,
+            }
+        ), 503
+
+    user_key = _learning_user_key()
+    today = _today_local_str()
+
+    updated = db.learning_progress.find_one_and_update(
+        {
+            'user_key': user_key,
+            '$or': [
+                {'last_claim_date': {'$exists': False}},
+                {'last_claim_date': None},
+                {'last_claim_date': {'$ne': today}},
+            ],
+        },
+        {
+            '$inc': {'xp': 25, 'total_xp_earned': 25},
+            '$set': {'last_claim_date': today, 'updated_at': _utc_now()},
+            '$setOnInsert': {
+                'coins': 0,
+                'gems': 0,
+                'hearts': 5,
+                'streak_days': 0,
+                'streak_freezes': 0,
+                'badges': [],
+                'completed_lessons': [],
+                'total_lesson_attempts': 0,
+                'total_questions_answered': 0,
+                'total_correct_answers': 0,
+                'last_activity_day': None,
+            },
+        },
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+
+    if updated:
+        return jsonify(
+            {
+                'success': True,
+                'message': 'Reward claimed',
+                'new_score': int(updated.get('xp', 0)),
+            }
+        )
+
+    existing = _get_learning_progress(user_key)
+    return jsonify(
+        {
+            'success': False,
+            'message': 'Already claimed today',
+            'new_score': int(existing.get('xp', 0)),
+        }
+    )
 
 
 @app.get('/api/v1/quests/today')
@@ -1069,7 +1149,7 @@ def learning_complete():
             'total_questions_answered': int(progress.get('total_questions_answered', 0)) + total_questions,
             'total_correct_answers': int(progress.get('total_correct_answers', 0)) + correct_answers,
             'total_xp_earned': int(progress.get('total_xp_earned', 0)) + xp_awarded,
-            'last_activity_day': time.strftime('%Y-%m-%d'),
+            'last_activity_day': _today_local_str(),
         }
     )
     _save_learning_progress(user_key, updated_progress)

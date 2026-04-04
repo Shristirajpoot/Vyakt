@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Vyakt - Gamified Learning{% endblock %}
+{% block title %}Vyakt - Your Expression Journey{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/learning.css') }}">
@@ -8,20 +8,30 @@
 
 {% block content %}
 <section class="learning-shell">
+  <div class="ambient-orb orb-one" aria-hidden="true"></div>
+  <div class="ambient-orb orb-two" aria-hidden="true"></div>
+  <div class="ambient-orb orb-three" aria-hidden="true"></div>
+
+  <div class="expression-banner card">
+    <p>Every sign you learn gives a voice to silence.</p>
+  </div>
+
   <div class="learning-top">
     <div class="identity-block card">
-      <p class="kicker">Learning Arena</p>
-      <h1>Sign Quest Path</h1>
-      <p>Practice bite-sized lessons, hold your streak, and unlock new units as you improve.</p>
+      <p class="kicker">Your Expression Journey</p>
+      <h1>Giving Voice Through Hands</h1>
+      <p class="welcome-line">Welcome, Ayush ??</p>
+      <p>You're building your voice step by step.</p>
+      <p class="express-line">You can now express: Greetings, Emotions</p>
       <div class="hero-actions">
         <a href="#unit-path" class="btn btn-primary">Continue Journey</a>
-        <button id="claimReward" class="btn btn-outline">Claim Daily Chest</button>
+        <button id="claimReward" class="btn btn-outline">Claim Daily Practice Reward</button>
       </div>
     </div>
 
     <div class="stats-grid">
       <article class="stat-card card">
-        <p>XP</p>
+        <p>Expression Score</p>
         <h3 id="xpValue">0</h3>
       </article>
       <article class="stat-card card">
@@ -29,11 +39,11 @@
         <h3 id="streakValue">0 days</h3>
       </article>
       <article class="stat-card card">
-        <p>Hearts</p>
+        <p>Energy</p>
         <h3 id="heartValue">5</h3>
       </article>
       <article class="stat-card card">
-        <p>Badges</p>
+        <p>Milestones</p>
         <h3 id="badgeValue">0</h3>
       </article>
     </div>
@@ -41,37 +51,37 @@
 
   <div class="learning-body">
     <aside class="quest-panel card">
-      <h2>Daily Quests</h2>
+      <h2>Daily Practice</h2>
       <ul id="questList" class="quest-list"></ul>
 
       <section class="league-card">
-        <h3>Weekly League</h3>
+        <h3>Weekly Expression Arc</h3>
         <p id="leagueTier">Bronze League</p>
         <div class="league-progress-track">
           <span id="leagueProgressBar"></span>
         </div>
-        <small id="leagueHint">Win 120 XP this week to move to Silver.</small>
+        <small id="leagueHint">Gain 120 Expression Score this week to move to Silver.</small>
       </section>
 
       <section class="shop-card">
-        <h3>Streak Freeze Shop</h3>
-        <p>Protect your streak when you miss a day.</p>
+        <h3>Energy Reserve</h3>
+        <p>Protect your streak when life gets busy.</p>
         <div class="shop-actions">
-          <button id="buyFreezeOne" class="btn btn-outline btn-sm">Buy 1 Freeze (120 XP)</button>
-          <button id="buyFreezeTwo" class="btn btn-outline btn-sm">Buy 2 Freeze (200 XP)</button>
+          <button id="buyFreezeOne" class="btn btn-outline btn-sm">Buy 1 Reserve (120 Expression Score)</button>
+          <button id="buyFreezeTwo" class="btn btn-outline btn-sm">Buy 2 Reserve (200 Expression Score)</button>
         </div>
         <p class="shop-balance">Owned: <strong id="freezeOwned">0</strong></p>
       </section>
 
-      <h2 class="mt">Recent Badges</h2>
+      <h2 class="mt">Recent Milestones</h2>
       <ul id="badgeList" class="badge-list"></ul>
     </aside>
 
     <section id="unit-path" class="path-panel card">
       <div class="path-head">
         <div>
-          <h2>Level Path</h2>
-          <p class="path-subtitle">Follow the curved journey and clear each lesson node.</p>
+          <h2>Expression Islands</h2>
+          <p class="path-subtitle">Travel island to island and conquer your ability to express.</p>
         </div>
         <button id="refreshPath" class="btn btn-outline btn-sm">Refresh</button>
       </div>
@@ -83,8 +93,8 @@
 <div id="rewardToast" class="reward-toast hidden" role="status" aria-live="polite">
   <div class="reward-core">
     <span class="reward-burst"></span>
-    <h4 id="rewardTitle">Reward Unlocked!</h4>
-    <p id="rewardText">+0 XP</p>
+    <h4 id="rewardTitle">Progress Unlocked</h4>
+    <p id="rewardText">+0 Expression Score</p>
   </div>
 </div>
 

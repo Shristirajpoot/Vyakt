@@ -6,6 +6,7 @@ const state = {
   quizIndex: 0,
   selectedOption: null,
   correctCount: 0,
+  claimInFlight: false,
 };
 
 const ui = {
@@ -72,7 +73,7 @@ function renderProfile() {
   const recent = state.profile.badges.slice(-5);
   if (!recent.length) {
     const li = document.createElement('li');
-    li.textContent = 'Complete lessons to unlock badges.';
+    li.textContent = 'Complete lessons to unlock milestones.';
     ui.badgeList.appendChild(li);
     return;
   }
@@ -82,7 +83,35 @@ function renderProfile() {
     ui.badgeList.appendChild(li);
   });
 
+  syncClaimButtonFromState();
   renderLeagueCard();
+}
+
+function syncLearningThemeWithGlobal() {
+  const globalTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  document.body.classList.remove('light', 'dark');
+  document.body.classList.add(globalTheme);
+}
+
+function initLearningThemeSync() {
+  syncLearningThemeWithGlobal();
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+        syncLearningThemeWithGlobal();
+      }
+    }
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
+
+function setClaimButtonState(isClaimed) {
+  ui.claimReward.disabled = Boolean(isClaimed);
+  ui.claimReward.textContent = isClaimed ? 'Already claimed today' : 'Claim Daily Practice Reward';
+}
+
+function syncClaimButtonFromState() {
+  setClaimButtonState(Boolean(state.profile.reward_claimed_today));
 }
 
 function renderLessonSummary(result) {
@@ -96,7 +125,7 @@ function renderLessonSummary(result) {
   const gems = stats.gems_awarded ?? 0;
 
   ui.summaryStats.textContent =
-    `Correct ${correct}/${total} | Score ${score}% | Points ${points} | XP +${xp} | Coins +${coins} | Gems +${gems}`;
+    `Correct ${correct}/${total} | Score ${score}% | Points ${points} | Expression Score +${xp} | Coins +${coins} | Gems +${gems}`;
 
   ui.summaryInsights.innerHTML = '';
   const tips = result.memory_suggestions || [];
@@ -134,7 +163,7 @@ function renderLeagueCard() {
   const nextTier = tiers.find((item) => item.min > tier.min);
   if (nextTier) {
     const need = Math.max(0, nextTier.min - xp);
-    ui.leagueHint.textContent = `Earn ${need} XP to reach ${nextTier.name}.`;
+    ui.leagueHint.textContent = `Earn ${need} Expression Score to reach ${nextTier.name}.`;
   } else {
     ui.leagueHint.textContent = 'You are in the top league. Keep the momentum.';
   }
@@ -144,15 +173,61 @@ function renderQuests(quests) {
   ui.questList.innerHTML = '';
   quests.forEach((quest) => {
     const li = document.createElement('li');
-    li.textContent = `${quest.title} (+${quest.reward_xp} XP)`;
+    li.textContent = `${quest.title} (+${quest.reward_xp} Expression Score)`;
     ui.questList.appendChild(li);
   });
 }
 
-function lessonButtonClass(lesson) {
-  if (lesson.completed) return 'lesson-pill completed';
-  if (lesson.unlocked) return 'lesson-pill unlocked';
-  return 'lesson-pill locked';
+function lessonButtonClass(status) {
+  if (status === 'completed') return 'completed';
+  if (status === 'unlocked') return 'unlocked';
+  return 'locked';
+}
+
+function normalizeLessonStatuses(lessons) {
+  let unlockedAssigned = false;
+  return lessons.map((lesson, index) => {
+    if (lesson.status === 'completed') {
+      return lesson;
+    }
+
+    if (!unlockedAssigned && (index === 0 || lessons[index - 1].status === 'completed')) {
+      unlockedAssigned = true;
+      return { ...lesson, status: 'unlocked' };
+    }
+
+    return { ...lesson, status: 'locked' };
+  });
+}
+
+function flattenLessonTrackData() {
+  const flat = [];
+  state.path.forEach((level) => {
+    (level.sublevels || []).forEach((sub) => {
+      (sub.lessons || []).forEach((lesson, idx) => {
+        let status = 'locked';
+        if (lesson.completed) status = 'completed';
+        else if (lesson.unlocked) status = 'unlocked';
+
+        flat.push({
+          id: lesson.lesson_id,
+          label: lesson.label || `Lesson ${idx + 1}`,
+          goal: lesson.goal || 'Build expressive hand communication.',
+          section: sub.name || level.name || 'Learning',
+          status,
+        });
+      });
+    });
+  });
+
+  return normalizeLessonStatuses(flat);
+}
+
+function usageFromLesson(lesson, sublevelName) {
+  if (lesson.goal) {
+    return `Used in daily conversations: ${lesson.goal}.`;
+  }
+  return `Used in real-world ${String(sublevelName || '').toLowerCase()} interactions.`;
 }
 
 function sleep(ms) {
@@ -259,7 +334,7 @@ async function runQuestionIntroSequence() {
 
   ui.quizStage.classList.remove('is-ready');
   ui.lessonDialog.classList.add('is-blurred');
-  await sleep(260);
+  await sleep(360);
   ui.lessonDialog.classList.remove('is-blurred');
   setOptionsState('visible');
   ui.submitAnswer.classList.remove('hidden');
@@ -267,48 +342,144 @@ async function runQuestionIntroSequence() {
 
 function renderPath() {
   ui.pathContainer.innerHTML = '';
+  const lessons = flattenLessonTrackData();
+  if (!lessons.length) {
+    ui.pathContainer.innerHTML = '<p>Path data unavailable.</p>';
+    return;
+  }
 
-  state.path.forEach((level) => {
-    const levelCard = document.createElement('section');
-    levelCard.className = 'level-card';
+  const shell = document.createElement('div');
+  shell.className = 'lesson-track-shell';
 
-    const title = document.createElement('h3');
-    title.className = 'level-title';
-    title.textContent = level.name;
-    levelCard.appendChild(title);
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.classList.add('lesson-track-svg');
 
-    level.sublevels.forEach((sub) => {
-      const row = document.createElement('div');
-      row.className = 'sublevel-row';
+  const basePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  basePath.classList.add('track-path-base');
 
-      const subTitle = document.createElement('h4');
-      subTitle.textContent = sub.name;
-      row.appendChild(subTitle);
+  const activePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  activePath.classList.add('track-path-active');
 
-      const grid = document.createElement('div');
-      grid.className = 'lessons-grid';
+  const flowPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  flowPath.classList.add('track-path-flow');
 
-      sub.lessons.forEach((lesson) => {
-        const button = document.createElement('button');
-        button.className = lessonButtonClass(lesson);
-        button.textContent = lesson.label;
-        button.title = lesson.goal;
+  const nodeLayer = document.createElement('div');
+  nodeLayer.className = 'lesson-track-nodes';
 
-        if (!lesson.unlocked && !lesson.completed) {
-          button.disabled = true;
-        } else {
-          button.addEventListener('click', () => openLesson(lesson.lesson_id));
-        }
+  shell.appendChild(svg);
+  shell.appendChild(nodeLayer);
+  svg.appendChild(basePath);
+  svg.appendChild(activePath);
+  svg.appendChild(flowPath);
+  ui.pathContainer.appendChild(shell);
 
-        grid.appendChild(button);
-      });
+  const width = Math.max(ui.pathContainer.clientWidth - 12, 320);
+  const xCenter = width / 2;
+  const swing = Math.min(108, Math.max(52, width * 0.16));
+  const stepY = 140;
+  const topPadding = 70;
+  const points = lessons.map((_, idx) => ({
+    x: xCenter + (Math.sin((idx * 0.95) + 0.45) * swing),
+    y: topPadding + (idx * stepY),
+  }));
+  const height = points[points.length - 1].y + 82;
 
-      row.appendChild(grid);
-      levelCard.appendChild(row);
-    });
+  shell.style.height = `${height + 22}px`;
+  svg.setAttribute('viewBox', `0 0 ${width} ${height + 22}`);
+  svg.setAttribute('preserveAspectRatio', 'none');
 
-    ui.pathContainer.appendChild(levelCard);
+  const d = points.reduce((acc, point, idx) => {
+    if (idx === 0) return `M ${point.x} ${point.y}`;
+    const prev = points[idx - 1];
+    const deltaX = point.x - prev.x;
+    const cp1x = prev.x + (deltaX * 0.32);
+    const cp1y = prev.y + (stepY * 0.4);
+    const cp2x = prev.x + (deltaX * 0.68);
+    const cp2y = point.y - (stepY * 0.4);
+    return `${acc} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${point.x} ${point.y}`;
+  }, '');
+
+  basePath.setAttribute('d', d);
+  activePath.setAttribute('d', d);
+  flowPath.setAttribute('d', d);
+  const pathLength = activePath.getTotalLength();
+  let completedFromStart = 0;
+  for (const lesson of lessons) {
+    if (lesson.status === 'completed') completedFromStart += 1;
+    else break;
+  }
+  const totalSegments = Math.max(1, lessons.length - 1);
+  const progressRatio = Math.max(0, Math.min(1, completedFromStart / totalSegments));
+  const activeLength = pathLength * progressRatio;
+  activePath.style.strokeDasharray = `${pathLength}`;
+  activePath.style.strokeDashoffset = `${pathLength}`;
+  flowPath.style.strokeDasharray = '12 18';
+  flowPath.style.strokeDashoffset = '0';
+  requestAnimationFrame(() => {
+    activePath.classList.add('draw');
+    activePath.style.strokeDashoffset = `${Math.max(0, pathLength - activeLength)}`;
+    flowPath.classList.add('draw');
   });
+
+  const currentLesson = lessons.find((item) => item.status === 'unlocked');
+  lessons.forEach((lesson, idx) => {
+    const point = points[idx];
+    const node = document.createElement('button');
+    node.className = `path-node ${lessonButtonClass(lesson.status)}`;
+    node.classList.add(`island-v${(idx % 4) + 1}`);
+    node.style.left = `${point.x}px`;
+    node.style.top = `${point.y}px`;
+    node.title = lesson.goal;
+    node.setAttribute('data-lesson-id', lesson.id);
+
+    if (currentLesson && currentLesson.id === lesson.id) {
+      node.classList.add('current-lesson');
+    }
+
+    const icon = document.createElement('span');
+    icon.className = 'node-icon';
+    icon.textContent = lesson.status === 'locked' ? '🔒' : '🤟';
+
+    const label = document.createElement('span');
+    label.className = 'node-label';
+    label.textContent = lesson.label;
+
+    const subtitle = document.createElement('span');
+    subtitle.className = 'node-subtitle';
+    subtitle.textContent = usageFromLesson({ goal: lesson.goal }, lesson.section);
+
+    node.appendChild(icon);
+    node.appendChild(label);
+    node.appendChild(subtitle);
+    if (lesson.status === 'completed') {
+      const flag = document.createElement('span');
+      flag.className = 'island-flag';
+      flag.innerHTML = '<span class="flag-pole"></span><span class="flag-cloth"></span>';
+      node.appendChild(flag);
+    }
+
+    if (lesson.status === 'locked') {
+      node.disabled = true;
+      node.setAttribute('aria-disabled', 'true');
+    } else {
+      node.addEventListener('click', () => {
+        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.setTimeout(() => {
+          openLesson(lesson.id);
+        }, 140);
+      });
+    }
+
+    nodeLayer.appendChild(node);
+    window.setTimeout(() => node.classList.add('in-view'), idx * 80);
+  });
+
+  if (currentLesson) {
+    const currentNode = nodeLayer.querySelector(`[data-lesson-id="${currentLesson.id}"]`);
+    if (currentNode) {
+      currentNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 }
 
 function showReward(title, text) {
@@ -396,7 +567,7 @@ async function submitCurrentAnswer() {
 
   if (result.correct) {
     state.correctCount += 1;
-    ui.quizFeedback.textContent = `Correct. +${result.xp_delta || 0} XP, +${result.coins_delta || 0} coins.`;
+    ui.quizFeedback.textContent = `Correct. +${result.xp_delta || 0} Expression Score, +${result.coins_delta || 0} coins.`;
   } else {
     ui.quizFeedback.textContent = `Incorrect. Correct answer: ${result.correct_answer}`;
   }
@@ -472,27 +643,58 @@ async function finishLessonSession() {
   const stats = result.stats || {};
   showReward(
     'Lesson Complete',
-    `Score ${stats.score_percent || 0}% | +${stats.xp_awarded || 0} XP | +${stats.coins_awarded || 0} coins`
+    `Score ${stats.score_percent || 0}% | +${stats.xp_awarded || 0} Expression Score | +${stats.coins_awarded || 0} coins`
   );
 }
 
 function buyFreeze(amount, cost) {
   if ((state.profile.xp || 0) < cost) {
-    showReward('Not Enough XP', `Need ${cost} XP to buy ${amount} freeze.`);
+    showReward('Not Enough Expression Score', `Need ${cost} Expression Score to buy ${amount} reserve.`);
     return;
   }
 
   state.profile.xp -= cost;
   state.profile.streak_freezes = (state.profile.streak_freezes || 0) + amount;
   renderProfile();
-  showReward('Shop Purchase', `Bought ${amount} freeze for ${cost} XP.`);
+  showReward('Energy Reserve Added', `Bought ${amount} reserve for ${cost} Expression Score.`);
 }
 
-function claimDailyChest() {
-  const reward = 25;
-  state.profile.xp = (state.profile.xp || 0) + reward;
-  renderProfile();
-  showReward('Daily Chest', `+${reward} XP bonus claimed.`);
+async function claimDailyChest() {
+  if (state.claimInFlight) {
+    return;
+  }
+
+  if (state.profile.reward_claimed_today) {
+    setClaimButtonState(true);
+    showReward('Already claimed today', 'You can claim your next reward tomorrow.');
+    return;
+  }
+
+  state.claimInFlight = true;
+  ui.claimReward.disabled = true;
+  ui.claimReward.textContent = 'Claiming...';
+  try {
+    const result = await getJSON('/claim_reward', { method: 'POST' });
+    if (result.success) {
+      state.profile.xp = Number(result.new_score || state.profile.xp || 0);
+      state.profile.reward_claimed_today = true;
+      renderProfile();
+      showReward('Daily Practice Reward', '+25 Expression Score claimed.');
+      return;
+    }
+
+    if ((result.message || '').toLowerCase().includes('already claimed')) {
+      state.profile.reward_claimed_today = true;
+      renderProfile();
+      showReward('Already claimed today', result.message || 'You already claimed today.');
+      return;
+    }
+
+    showReward('Claim Failed', result.message || 'Could not claim reward.');
+  } finally {
+    state.claimInFlight = false;
+    syncClaimButtonFromState();
+  }
 }
 
 async function loadStateAndQuests() {
@@ -533,12 +735,18 @@ function bindEvents() {
   });
   ui.nextQuestion.addEventListener('click', gotoNextQuestion);
   ui.finishLesson.addEventListener('click', finishLessonSession);
-  ui.claimReward.addEventListener('click', claimDailyChest);
+  ui.claimReward.addEventListener('click', () => {
+    claimDailyChest().catch((error) => {
+      console.error(error);
+      showReward('Claim Failed', 'Could not claim reward.');
+    });
+  });
   ui.buyFreezeOne.addEventListener('click', () => buyFreeze(1, 120));
   ui.buyFreezeTwo.addEventListener('click', () => buyFreeze(2, 200));
 }
 
 async function boot() {
+  initLearningThemeSync();
   bindEvents();
   try {
     await loadStateAndQuests();
