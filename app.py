@@ -1,4 +1,5 @@
 ﻿import cv2
+import base64
 import os
 import requests
 import re
@@ -1569,6 +1570,144 @@ def _yield_error_stream(message: str):
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         time.sleep(0.5)
 
+
+# --- Client-side camera: process frames sent from the browser ---
+
+_frame_sequence = deque(maxlen=model_sequence_length)
+_frame_last_added = ""
+
+try:
+    from mediapipe import solutions as _mp_solutions
+    _mp_hands_module = _mp_solutions.hands
+    _mp_drawing = _mp_solutions.drawing_utils
+    _mp_hands = _mp_hands_module.Hands(
+        static_image_mode=True,
+        min_detection_confidence=0.5,
+        max_num_hands=2,
+    )
+except ImportError:
+    _mp_hands = None
+    _mp_drawing = None
+
+
+@app.route('/process_frame', methods=['POST'])
+def process_frame():
+    global latest_prediction, is_capturing, captured_sequence, _frame_last_added
+
+    if _mp_hands is None:
+        return jsonify({"error": "mediapipe not available"}), 500
+
+    data = request.get_json(silent=True)
+    if not data or 'image' not in data:
+        return jsonify({"error": "no image provided"}), 400
+
+    try:
+        img_data = data['image']
+        if ',' in img_data:
+            img_data = img_data.split(',', 1)[1]
+        img_bytes = base64.b64decode(img_data)
+        np_arr = np.frombuffer(img_bytes, np.uint8)
+        frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        if frame is None:
+            return jsonify({"error": "could not decode image"}), 400
+    except Exception:
+        return jsonify({"error": "invalid image data"}), 400
+
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = _mp_hands.process(frame_rgb)
+
+    # Draw hand landmarks on the frame
+    if results and results.multi_hand_landmarks and _mp_drawing:
+        for hand_landmarks in results.multi_hand_landmarks:
+            _mp_drawing.draw_landmarks(frame, hand_landmarks, _mp_hands_module.HAND_CONNECTIONS)
+
+    current_features = extract_landmark_features(results)
+    has_hand_landmarks = bool(results and results.multi_hand_landmarks)
+    no_hand_frame = (not has_hand_landmarks) or is_no_hand_feature_vector(current_features)
+
+    prediction_text = ""
+    prediction_confidence = 0.0
+
+    if no_hand_frame:
+        _frame_sequence.clear()
+        latest_prediction = {"text": "", "confidence": 0.0, "state": "no_hand"}
+    else:
+        _frame_sequence.append(current_features)
+        latest_prediction = {"text": "Identifying", "confidence": 0.0, "state": "identifying"}
+
+        if gesture_model is not None and len(_frame_sequence) == model_sequence_length:
+            input_np = normalize_sequence(
+                _frame_sequence,
+                sequence_length=model_sequence_length,
+                feature_size=model_feature_size,
+            )
+            input_tensor = torch.tensor(input_np, dtype=torch.float32).unsqueeze(0).to(MODEL_DEVICE)
+
+            with torch.no_grad():
+                logits = gesture_model(input_tensor)
+                probs = torch.softmax(logits, dim=1)
+                top_confidence, top_index = torch.max(probs, dim=1)
+                pred_idx = int(top_index.item())
+                prediction_confidence = float(top_confidence.item())
+
+            if gesture_labels and pred_idx < len(gesture_labels):
+                raw_label = str(gesture_labels[pred_idx])
+
+                if prediction_confidence < UNKNOWN_CONFIDENCE_THRESHOLD:
+                    prediction_text = "Unknown Gesture"
+                    prediction_state = "unknown"
+                elif prediction_confidence < PREDICTION_CONFIDENCE_THRESHOLD:
+                    prediction_text = "Identifying"
+                    prediction_state = "identifying"
+                else:
+                    prediction_text = raw_label
+                    prediction_state = "predicted"
+
+                latest_prediction = {
+                    "text": prediction_text,
+                    "confidence": round(prediction_confidence, 4),
+                    "state": prediction_state,
+                }
+
+                if is_capturing and prediction_state == "predicted":
+                    if prediction_text != _frame_last_added:
+                        captured_sequence.append(prediction_text)
+                        _frame_last_added = prediction_text
+
+    # Draw prediction overlay on the frame
+    if prediction_text:
+        overlay_confidence = int(round(prediction_confidence * 100))
+        cv2.putText(
+            frame,
+            f"Prediction: {prediction_text} ({overlay_confidence}%)",
+            (10, 35),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (0, 255, 0),
+            2,
+            cv2.LINE_AA,
+        )
+
+    # Encode annotated frame as base64 JPEG
+    ok, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+    annotated_b64 = ""
+    if ok:
+        annotated_b64 = "data:image/jpeg;base64," + base64.b64encode(buffer.tobytes()).decode('ascii')
+
+    response = dict(latest_prediction)
+    response["annotated_frame"] = annotated_b64
+    return jsonify(response)
+
+
+@app.route('/reset_frame_state', methods=['POST'])
+def reset_frame_state():
+    global _frame_last_added
+    _frame_sequence.clear()
+    _frame_last_added = ""
+    return jsonify({"status": "ok"})
+
+
+# --- Legacy server-side camera routes (kept for local dev) ---
 
 @app.route('/generate_frames')
 def generate_frames():
